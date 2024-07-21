@@ -38,6 +38,10 @@ classifiers = [
   "License :: OSI Approved :: Apache Software License"
 ]
 
+[project.urls]
+Homepage = "https://toolhouse.ai"
+Repository = "https://github.com/toolhouseai/toolhouse-sdk-python"
+
 [project.optional-dependencies]
 test = [ 
 	"pytest",

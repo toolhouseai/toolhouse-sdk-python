@@ -9,13 +9,14 @@ Class:
 """
 import os
 from enum import Enum
-from typing import List, Union, Dict, Any
+from typing import List, Union, Dict, Any, Optional
 
 from .net.environment import Environment
 from .services.tools import Tools
 from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
+from ._exceptions import ToolhouseError
 try:
     from .models.OpenAIStream import stream_to_chat_completion
 except ImportError:
@@ -38,8 +39,8 @@ class Toolhouse:
         Set the access token
     """
 
-    def __init__(self, access_token: str | None = None,
-                 provider: ProviderModel | str = ProviderModel.OPENAI,
+    def __init__(self, access_token: Optional[str] = None,
+                 provider: Union[ProviderModel, str] = ProviderModel.OPENAI,
                  environment: Environment = Environment.DEFAULT
                  ) -> None:
         """
@@ -61,6 +62,10 @@ class Toolhouse:
             provider, ProviderModel.list(), "provider")
         if access_token is None:
             access_token = os.environ.get("TOOLHOUSE_API_KEY", None)
+        if access_token is None:
+            raise ToolhouseError(
+                "The access_token client option must be set either by passing access_token to the SDK or by setting the TOOLHOUSE_API_KEY environment variable"
+            )
         self.api_key = access_token
         self.tools = Tools(access_token)
         self.metadata: Dict[str, Any] = {}

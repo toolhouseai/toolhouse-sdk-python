@@ -1,0 +1,2 @@
+class ToolhouseError(Exception):
+    pass

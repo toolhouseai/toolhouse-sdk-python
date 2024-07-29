@@ -37,7 +37,7 @@ class BaseService:
 
     _http = HTTPClient(None)
 
-    def __init__(self, access_token: str | None) -> None:
+    def __init__(self, access_token: str) -> None:
         """
         Initialize client
 

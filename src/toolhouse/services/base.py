@@ -48,12 +48,14 @@ class BaseService:
         """
         self._access_token = access_token
 
+    @classmethod
     def _pattern_matching(cls, value: str, pattern: str, variable_name: str):
         if re.match(r"{}".format(pattern), value):
             return value
         else:
             raise ValueError(f"Invalid value for {variable_name}: must match {pattern}")
 
+    @classmethod
     def _enum_matching(
         cls, value: Union[str, Enum], enum_values: List[str], variable_name: str
     ):

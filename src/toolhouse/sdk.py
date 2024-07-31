@@ -11,12 +11,13 @@ import os
 from enum import Enum
 from typing import List, Union, Dict, Any, Optional
 
+from .exceptions import ToolhouseError
 from .net.environment import Environment
 from .services.tools import Tools
+from .services.local_tools import LocalTools
 from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
-from ._exceptions import ToolhouseError
 try:
     from .models.OpenAIStream import stream_to_chat_completion
 except ImportError:
@@ -71,7 +72,12 @@ class Toolhouse:
         self.metadata: Dict[str, Any] = {}
         self.set_base_url(environment.value if isinstance(
             environment, Environment) else environment)
+        self.local_tools: LocalTools = LocalTools()
 
+    def register_local_tool(self, local_tool):
+        """Register Local Tools"""
+        return self.local_tools.register_local_tool(local_tool)
+    
     def set_metadata(self, key: str, value) -> None:
         """
         Sets User Metadata
@@ -159,24 +165,15 @@ class Toolhouse:
 
             if tool_calls:
                 for tool in tool_calls:
-                    run_tool_request = RunToolsRequest(
-                        tool, self.provider, self.metadata)
-                    run_response = self.tools.run_tools(run_tool_request)
-                    messages.append(run_response.content)
-
-        elif self.provider in ("openai_assistants", ProviderModel.OPENAI_ASSISTANTS):
-            if 'submit_tool_outputs' not in response.required_action:
-                return []
-
-            submit_tool_outputs = response.required_action.submit_tool_outputs
-            tool_calls = getattr(submit_tool_outputs, 'tool_calls', None)
-            if tool_calls:
-                for tool in tool_calls:
-                    run_tool_request = RunToolsRequest(
-                        tool, self.provider, self.metadata)
-                    run_response = self.tools.run_tools(run_tool_request)
-                    messages.append(run_response.content)
-
+                    if tool.function.name in self.local_tools.get_registered_tools():
+                        result = self.local_tools.run_tools(tool)
+                        messages.append(result.model_dump())
+                    else:
+                        run_tool_request = RunToolsRequest(
+                            tool, self.provider, self.metadata)
+                        run_response = self.tools.run_tools(run_tool_request)
+                        messages.append(run_response.content)
+        
         elif self.provider in ("anthropic", ProviderModel.ANTHROPIC):
             if response.stop_reason != 'tool_use':
                 return []
@@ -186,11 +183,15 @@ class Toolhouse:
                 if tool.type == "tool_use":
                     if stream:
                         tool = tool.model_dump()
-                    run_tool_request = RunToolsRequest(
-                        tool, self.provider, self.metadata)
-                    run_response = self.tools.run_tools(run_tool_request)
-                    message['content'].append(run_response.content)
-
+                    if tool.name in self.local_tools.get_registered_tools():
+                        result = self.local_tools.run_tools(tool)
+                        message['content'].append(result.model_dump())
+                    else:
+                        run_tool_request = RunToolsRequest(
+                            tool, self.provider, self.metadata)
+                        run_response = self.tools.run_tools(run_tool_request)
+                        output = run_response.content
+                        message['content'].append(output)
             if message['content']:
                 if append:
                     messages.append({'role': 'assistant', 'content': response.content})

@@ -14,7 +14,7 @@ class TestSDK(unittest.TestCase):
     def test_sdk_api_exception(self):
         with self.assertRaises(ToolhouseError):
             Toolhouse()
-    
+
     @mock.patch.dict(os.environ, {"TOOLHOUSE_API_KEY": "345"}, clear=True)
     def test_sdk(self):
         th = Toolhouse()

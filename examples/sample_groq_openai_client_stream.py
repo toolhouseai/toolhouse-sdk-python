@@ -12,7 +12,7 @@ TOKEN = os.getenv("GROQCLOUD_API_KEY")
 TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
 client = OpenAI(
-    api_key=os.environ.get('GROQCLOUD_API_KEY'),
+    api_key=TOKEN,
     base_url="https://api.groq.com/openai/v1",
 )
 

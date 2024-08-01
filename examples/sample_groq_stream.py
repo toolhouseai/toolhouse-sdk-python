@@ -11,9 +11,7 @@ load_dotenv()
 TOKEN = os.getenv("GROQCLOUD_API_KEY")
 TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
-client = Groq(
-    api_key=os.environ.get('GROQCLOUD_API_KEY')
-)
+client = Groq(api_key=TOKEN)
 
 th = Toolhouse(access_token=TH_TOKEN, provider="openai")
 

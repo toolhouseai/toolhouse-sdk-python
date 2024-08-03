@@ -4,11 +4,14 @@ from typing import List
 from dotenv import load_dotenv
 from openai import OpenAI
 from toolhouse import Toolhouse
+from toolhouse.models.OpenAIStream import OpenAIStream
+
 load_dotenv()
 
 TOKEN = os.getenv("OPENAI_KEY")
 TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
+client = OpenAI(api_key=TOKEN)
 
 local_tools = [
     {'type': 'function',
@@ -35,26 +38,31 @@ def whatever(city: str):
     return f"Hello from {city}!!!"
 
 
-client = OpenAI(api_key=TOKEN)
-
 messages: List = [{
     "role": "user",
     "content":
         "Can I get an hello from Rome?"
     }]
 
-response = client.chat.completions.create(
+
+stream = client.chat.completions.create(
     model='gpt-4o',
     messages=messages,
-    tools=th.get_tools() + local_tools
+    tools=th.get_tools() + local_tools,
+    stream=True
 )
 
-messages += th.run_tools(response)
+# Use the stream and save blocks
+stream_storage = OpenAIStream()
+for block in stream:  # pylint: disable=E1133
+    print(block)
+    stream_storage.add(block)
+
+messages += th.run_tools(stream_storage, stream=True)
 
 response = client.chat.completions.create(
             model="gpt-4o",
             messages=messages,
             tools=th.get_tools() + local_tools
         )
-
 print(response.choices[0].message.content)

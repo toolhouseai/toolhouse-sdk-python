@@ -14,7 +14,7 @@ TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 local_tools = [
     {
         'name': 'hello',
-        'description': 'The user receive a customized hello message from a city and return it to the user', 
+        'description': 'The user receives a customized hello message from a city and returns it to the user.', 
         'input_schema': {
                     'type': 'object',
                     'properties': {
@@ -33,7 +33,7 @@ th.set_metadata("timezone", 5)
 
 
 @th.register_local_tool("hello")
-def whatever(city: str):
+def hello_tool(city: str):
     """Return Local Time"""
     return f"Hello from {city}!!!"
 

@@ -15,7 +15,7 @@ local_tools = [
      'function':
          {
              'name': 'hello',
-             'description': 'The user receive a customized hello message from a city and return it to the user',
+             'description': 'The user receives a customized hello message from a city and returns it to the user.',
              'parameters': {
                  'type': 'object',
                  'properties': {

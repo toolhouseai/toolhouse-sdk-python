@@ -30,8 +30,8 @@ th.set_metadata("timezone", 5)
 
 
 @th.register_local_tool("hello")
-def whatever(city: str):
-    """Return Local Time"""
+def hello_tool(city: str):
+    """Return a Hello message from a specific city."""
     return f"Hello from {city}!!!"
 
 
@@ -40,7 +40,7 @@ client = OpenAI(api_key=TOKEN)
 messages: List = [{
     "role": "user",
     "content":
-        "Can I get an hello from Rome?"
+        "Can I get a hello from Rome?"
     }]
 
 response = client.chat.completions.create(

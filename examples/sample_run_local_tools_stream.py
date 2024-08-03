@@ -3,8 +3,7 @@ import os
 from typing import List
 
 from dotenv import load_dotenv
-from anthropic import Anthropic
-from anthropic.types import TextBlock
+from anthropic import Anthropic, MessageStopEvent, TextEvent
 from toolhouse import Toolhouse, Provider
 
 load_dotenv()
@@ -45,20 +44,24 @@ messages: List = [{
         "Can I get a hello from Rome?"
     }]
 
-response = client.messages.create(
+with client.messages.stream(
     model="claude-3-5-sonnet-20240620",
     max_tokens=1024,
     tools=th.get_tools() + local_tools,
     messages=messages
-)
+) as stream:
+    for block in stream:
+        if isinstance(block, MessageStopEvent):
+            messages += th.run_tools(block.message, stream=True)
+        elif isinstance(block, TextEvent):
+            print(block.text, end="", flush=True)
 
-messages += th.run_tools(response)
 
-response = client.messages.create(
+with client.messages.stream(
             model="claude-3-5-sonnet-20240620",
             max_tokens=1024,
             tools=th.get_tools() + local_tools,
             messages=messages
-        )
-if isinstance(response.content[0], TextBlock):
-    print(response.content[0].text)
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)

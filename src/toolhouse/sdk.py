@@ -181,8 +181,6 @@ class Toolhouse:
             message: dict = {'role': 'user', 'content': []}
             for tool in response.content:
                 if tool.type == "tool_use":
-                    if stream:
-                        tool = tool.model_dump()
                     if tool.name in self.local_tools.get_registered_tools():
                         result = self.local_tools.run_tools(tool)
                         message['content'].append(result.model_dump())

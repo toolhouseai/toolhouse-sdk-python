@@ -9,6 +9,7 @@ Functions:
 
 import io
 from enum import Enum
+from pydantic import BaseModel
 
 
 def to_serialize(obj):
@@ -25,6 +26,8 @@ def to_serialize(obj):
         obj, (io.TextIOWrapper, io.BufferedIOBase)
     ):
         return obj
+    if isinstance(obj, BaseModel):
+        return obj.model_dump()
     iter_obj = obj.__dict__.items() if hasattr(obj, "__dict__") else obj.items()
     for key, value in iter_obj:
         if isinstance(value, (io.TextIOWrapper, io.BufferedIOBase)):

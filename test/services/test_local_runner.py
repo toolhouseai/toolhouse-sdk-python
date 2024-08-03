@@ -2,6 +2,7 @@ import json
 import unittest
 from anthropic.types import ToolUseBlock
 from openai.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall, Function
+from groq.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall as ChatCompletionMessageToolCallGroq, Function as FunctionGroq
 from toolhouse.services.local_tools import LocalTools
 
 
@@ -42,6 +43,19 @@ class TestLocalRunner(unittest.TestCase):
 
         func = Function(arguments=json.dumps({'a': 3, 'b': 5}), name="add")
         tool = ChatCompletionMessageToolCall(id="id", function=func, type="function")
+        # Test the 'add' function
+        result = self.runner.run_tools(tool)
+        self.assertEqual(result.content, "8", "The add function did not return the expected result")
+        
+    def test_register_and_run_local_tool_groq(self):
+        """Test registering and running a local tool groq"""
+
+        @self.runner.register_local_tool("add")
+        def add(a, b):
+            return str(a + b)
+
+        func = FunctionGroq(arguments=json.dumps({'a': 3, 'b': 5}), name="add")
+        tool = ChatCompletionMessageToolCallGroq(id="id", function=func, type="function")
         # Test the 'add' function
         result = self.runner.run_tools(tool)
         self.assertEqual(result.content, "8", "The add function did not return the expected result")

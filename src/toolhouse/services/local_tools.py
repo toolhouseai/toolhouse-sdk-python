@@ -3,18 +3,24 @@ from functools import wraps
 import json
 from anthropic.types import ToolUseBlock
 from openai.types.chat import ChatCompletionMessageToolCall
+from groq.types.chat import ChatCompletionMessageToolCall as GroqChatCompletionMessageToolCall
 from ..models.RunLocalTools import AnthropicToolResponse, OpenAIToolResponse
+
+SupportedTools = Union[
+    ChatCompletionMessageToolCall,
+    GroqChatCompletionMessageToolCall,
+    ToolUseBlock]
 
 
 class LocalTools():
     """Local Runner"""
     def __init__(self):
         self.local_tools = {}
-    
+
     def get_registered_tools(self) -> List[str]:
         """Get List of registered tools"""
         return self.local_tools.keys()
-    
+
     def register_local_tool(self, local_tool):
         """Register a new local tool runner"""
         def decorator(func):
@@ -39,7 +45,7 @@ class LocalTools():
                 f"Make sure that you have a function that can handle this tool and decorate it with @register_local_tool(\"{local_tool}\")."
             )
 
-    def run_tools(self, tool: Union[ChatCompletionMessageToolCall, ToolUseBlock]) -> Union[AnthropicToolResponse, OpenAIToolResponse]:
+    def run_tools(self, tool: SupportedTools) -> Union[AnthropicToolResponse, OpenAIToolResponse]:
         """_summary_
 
         Args:
@@ -53,7 +59,7 @@ class LocalTools():
             tool_input = tool.input if isinstance(tool.input, dict) else {}
             content = self._run_local_tools(local_tool=tool.name, **tool_input)
             return AnthropicToolResponse(type="tool_result", content=content, tool_use_id=tool.id)
-        elif isinstance(tool, ChatCompletionMessageToolCall):
+        elif isinstance(tool, ChatCompletionMessageToolCall) or isinstance(tool, GroqChatCompletionMessageToolCall):
             content = self._run_local_tools(tool.function.name, **json.loads(tool.function.arguments))
             return OpenAIToolResponse(tool_call_id=tool.id, name=tool.function.name, content=content, role="tool")
         else:

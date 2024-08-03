@@ -2,7 +2,7 @@
 import os
 from typing import List
 from dotenv import load_dotenv
-from groq import Groq
+from openai import OpenAI
 from toolhouse import Toolhouse
 
 load_dotenv()
@@ -10,8 +10,9 @@ load_dotenv()
 TOKEN = os.getenv("GROQCLOUD_API_KEY")
 TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
-client = Groq(
-    api_key=os.environ.get('GROQCLOUD_API_KEY')
+client = OpenAI(
+    api_key=TOKEN,
+    base_url="https://api.groq.com/openai/v1"
 )
 
 th = Toolhouse(access_token=TH_TOKEN, provider="openai")

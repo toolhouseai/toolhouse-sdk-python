@@ -41,9 +41,8 @@ def whatever(city: str):
 messages: List = [{
     "role": "user",
     "content":
-        "Generate code to calculate the Fibonacci sequence to 100."
-        "Execute it and give me the result"
-}]
+        "Can I get an hello from Rome?"
+    }]
 
 with client.messages.stream(
     model="claude-3-5-sonnet-20240620",

@@ -42,8 +42,9 @@ def whatever(city: str):
 messages: List = [{
     "role": "user",
     "content":
-        "Can I get an hello from Rome?"
-    }]
+        "Generate code to calculate the Fibonacci sequence to 100."
+        "Execute it and give me the result"
+}]
 
 response = client.messages.create(
     model="claude-3-5-sonnet-20240620",

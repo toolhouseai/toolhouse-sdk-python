@@ -31,7 +31,7 @@ th.set_metadata("timezone", 5)
 
 @th.register_local_tool("hello")
 def hello_tool(city: str):
-    """Return Local Time"""
+    """Return a Hello message from a specific city."""
     return f"Hello from {city}!!!"
 
 
@@ -40,7 +40,7 @@ client = Groq(api_key=TOKEN)
 messages: List = [{
     "role": "user",
     "content":
-        "Can I get an hello from Rome?"
+        "Can I get a hello from Rome?"
     }]
 
 response = client.chat.completions.create(

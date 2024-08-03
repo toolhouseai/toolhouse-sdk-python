@@ -30,7 +30,7 @@ th.set_metadata("timezone", 5)
 
 
 @th.register_local_tool("hello")
-def whatever(city: str):
+def hello(city: str):
     """Return Local Time"""
     return f"Hello from {city}!!!"
 

@@ -52,7 +52,7 @@ with client.messages.stream(
 ) as stream:
     for block in stream:
         if isinstance(block, MessageStopEvent):
-            messages += th.run_tools(block.message, stream=True)
+            messages += th.run_tools(block.message)
         elif isinstance(block, TextEvent):
             print(block.text, end="", flush=True)
 

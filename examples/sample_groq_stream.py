@@ -35,7 +35,7 @@ for block in stream:  # pylint: disable=E1133
     print(block)
     stream_storage.add(block)
 
-messages += th.run_tools(stream_storage, stream=True)
+messages += th.run_tools(stream_storage)
 
 response = client.chat.completions.create(
             model="llama3-groq-70b-8192-tool-use-preview",

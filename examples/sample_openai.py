@@ -2,7 +2,7 @@
 import os
 from typing import List
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, NOT_GIVEN
 from toolhouse import Toolhouse
 
 load_dotenv()
@@ -24,7 +24,7 @@ messages: List = [{
 response = client.chat.completions.create(
     model='gpt-4o',
     messages=messages,
-    tools=th.get_tools()
+    tools=th.get_tools() or NOT_GIVEN
 )
 
 messages += th.run_tools(response)
@@ -32,7 +32,7 @@ messages += th.run_tools(response)
 response = client.chat.completions.create(
             model="gpt-4o",
             messages=messages,
-            tools=th.get_tools()
+            tools=th.get_tools() or NOT_GIVEN
         )
 
 print(response.choices[0].message.content)

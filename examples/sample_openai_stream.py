@@ -2,7 +2,7 @@
 import os
 from typing import List
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, NOT_GIVEN
 from toolhouse import Toolhouse
 from toolhouse.models.OpenAIStream import OpenAIStream
 
@@ -25,7 +25,7 @@ messages: List = [{
 stream = client.chat.completions.create(
     model='gpt-4o',
     messages=messages,
-    tools=th.get_tools(),
+    tools=th.get_tools() or NOT_GIVEN,
     stream=True
 )
 
@@ -40,6 +40,6 @@ messages += th.run_tools(stream_storage, stream=True)
 response = client.chat.completions.create(
             model="gpt-4o",
             messages=messages,
-            tools=th.get_tools()
+            tools=th.get_tools() or NOT_GIVEN
         )
 print(response.choices[0].message.content)

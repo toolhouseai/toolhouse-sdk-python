@@ -2,7 +2,7 @@
 import os
 from typing import List
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, NOT_GIVEN
 from toolhouse import Toolhouse
 load_dotenv()
 

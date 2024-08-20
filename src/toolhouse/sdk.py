@@ -120,11 +120,11 @@ class Toolhouse:
         """
         self.tools.set_access_token(token)
 
-    def get_tools(self):
+    def get_tools(self, bundle="default"):
         """
         Get Tools
         """
-        return self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata))
+        return self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle))
 
     def run_tools(self, response, append: bool = True) -> List:
         """

@@ -11,13 +11,15 @@ class GetToolsRequest(BaseModel):
     Represents a tool call for Toolhouse.
     """
 
-    def __init__(self, provider: Provider, metadata: Any):
+    def __init__(self, provider: Provider, metadata: Any, bundle: str):
         """
         Initialize RunToolsRequest
         Parameters:
         ----------
             provider: str
             metadata
+            bundle: str
         """
         self.provider = self._enum_matching(provider, Provider.list(), "provider")
         self.metadata = metadata
+        self.bundle = bundle

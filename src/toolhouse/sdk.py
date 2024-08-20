@@ -18,7 +18,7 @@ from .services.local_tools import LocalTools
 from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
-from .models.Stream import ToolHouseStreamStorage, GroqStream, OpenAIStream, stream_to_chat_completion
+from .models.Stream import ToolhouseStreamStorage, GroqStream, OpenAIStream, stream_to_chat_completion
 
 
 class Toolhouse:
@@ -145,7 +145,7 @@ class Toolhouse:
         messages: List = []
 
         if self.provider in ("openai", ProviderModel.OPENAI):
-            if isinstance(response, (ToolHouseStreamStorage, GroqStream, OpenAIStream)):
+            if isinstance(response, (ToolhouseStreamStorage, GroqStream, OpenAIStream)):
                 response = stream_to_chat_completion(response)
                 if response is None:
                     return []

@@ -8,8 +8,8 @@ from openai.types.chat.chat_completion_message_tool_call import Function
 _T = TypeVar("_T")
 
 
-class ToolHouseStreamStorage():
-    """OpenAIStrem"""
+class ToolhouseStreamStorage():
+    """ToolhouseStreamStorage"""
     def __init__(self):
         self._contents = []
 
@@ -26,7 +26,7 @@ class ToolHouseStreamStorage():
         return self._contents[index]
 
 
-Stream = Union[OpenAIStream, GroqStream, ToolHouseStreamStorage]
+Stream = Union[OpenAIStream, GroqStream, ToolhouseStreamStorage]
 
 
 def stream_to_chat_completion(stream: Stream) -> Union[ChatCompletion, None]:

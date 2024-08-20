@@ -4,4 +4,4 @@ from .sdk import Toolhouse
 from .exceptions import ToolhouseError
 from .net.environment import Environment
 from .models.Provider import Provider
-from .models import stream_to_chat_completion, ToolHouseStreamStorage
+from .models import stream_to_chat_completion, ToolhouseStreamStorage

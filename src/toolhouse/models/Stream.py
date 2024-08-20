@@ -1,13 +1,15 @@
 from typing import Iterator, Union, Dict, TypeVar
-from openai.types.chat import ChatCompletionChunk, ChatCompletion, ChatCompletionMessage, ChatCompletionMessageToolCall
+from openai import Stream as OpenAIStream
+from groq import Stream as GroqStream
+from openai.types.chat import ChatCompletion, ChatCompletionMessage, ChatCompletionMessageToolCall
 from openai.types.chat.chat_completion import Choice
 from openai.types.chat.chat_completion_message_tool_call import Function
 
 _T = TypeVar("_T")
 
 
-class OpenAIStream():
-    """OpenAIStrem"""
+class ToolhouseStreamStorage():
+    """ToolhouseStreamStorage"""
     def __init__(self):
         self._contents = []
 
@@ -24,7 +26,10 @@ class OpenAIStream():
         return self._contents[index]
 
 
-def stream_to_chat_completion(stream: Iterator[ChatCompletionChunk]) -> Union[ChatCompletion, None]:
+Stream = Union[OpenAIStream, GroqStream, ToolhouseStreamStorage]
+
+
+def stream_to_chat_completion(stream: Stream) -> Union[ChatCompletion, None]:
     """OpenAI Stream to Chat Completion"""
     tools: Dict[str, ChatCompletionMessageToolCall] = {}
     chat_completion = None
@@ -50,8 +55,10 @@ def stream_to_chat_completion(stream: Iterator[ChatCompletionChunk]) -> Union[Ch
                         if tool_call_id not in tools:
                             tools[tool_call_id] = ChatCompletionMessageToolCall(
                                 id=tool_call_id,
-                                function=Function(arguments=getattr(tool_call.function, "arguments", None) or "",
-                                name=getattr(tool_call.function, "name", None) or ""),
+                                function=Function(
+                                    arguments=getattr(tool_call.function, "arguments", None) or "",
+                                    name=getattr(tool_call.function, "name", None) or ""
+                                    ),
                                 type="function"
                             )
                         else:

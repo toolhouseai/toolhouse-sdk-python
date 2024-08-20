@@ -18,10 +18,7 @@ from .services.local_tools import LocalTools
 from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
-try:
-    from .models.OpenAIStream import stream_to_chat_completion
-except ImportError:
-    stream_to_chat_completion = None  # type: ignore
+from .models.Stream import ToolhouseStreamStorage, GroqStream, OpenAIStream, stream_to_chat_completion
 
 
 class Toolhouse:
@@ -77,7 +74,7 @@ class Toolhouse:
     def register_local_tool(self, local_tool):
         """Register Local Tools"""
         return self.local_tools.register_local_tool(local_tool)
-    
+
     def set_metadata(self, key: str, value) -> None:
         """
         Sets User Metadata
@@ -129,7 +126,7 @@ class Toolhouse:
         """
         return self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata))
 
-    def run_tools(self, response, append: bool = True, stream=False) -> List:
+    def run_tools(self, response, append: bool = True) -> List:
         """
         Run Tools based on the response.
         Parameters
@@ -148,9 +145,7 @@ class Toolhouse:
         messages: List = []
 
         if self.provider in ("openai", ProviderModel.OPENAI):
-            if stream:
-                if stream_to_chat_completion is None:
-                    raise ImportError("OpenAI Package is required for this function.")
+            if isinstance(response, (ToolhouseStreamStorage, GroqStream, OpenAIStream)):
                 response = stream_to_chat_completion(response)
                 if response is None:
                     return []
@@ -173,7 +168,7 @@ class Toolhouse:
                             tool, self.provider, self.metadata)
                         run_response = self.tools.run_tools(run_tool_request)
                         messages.append(run_response.content)
-        
+
         elif self.provider in ("anthropic", ProviderModel.ANTHROPIC):
             if response.stop_reason != 'tool_use':
                 return []

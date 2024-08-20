@@ -4,7 +4,7 @@ from typing import List
 from dotenv import load_dotenv
 from openai import OpenAI
 from toolhouse import Toolhouse
-from toolhouse.models.OpenAIStream import OpenAIStream
+from toolhouse.models.Stream import ToolhouseStreamStorage
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ stream = client.chat.completions.create(
 )
 
 # Use the stream and save blocks
-stream_storage = OpenAIStream()
+stream_storage = ToolhouseStreamStorage()
 for block in stream:  # pylint: disable=E1133
     print(block)
     stream_storage.add(block)

@@ -16,4 +16,4 @@ from .ToolhouseCallResults import ToolhouseCallResults
 from .AnthropicToolCallResults import AnthropicToolCallResults
 from .OpenAiToolCallResults import OpenAiToolCallResults
 from .OpenAiToolAssistantsCallResults import OpenAiToolAssistantsCallResults
-from .OpenAIStream import OpenAIStream, stream_to_chat_completion
+from .Stream import ToolhouseStreamStorage, stream_to_chat_completion

@@ -217,8 +217,8 @@ TOKEN = os.getenv("OPENAI_KEY")
 TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
 th = Toolhouse(access_token=TH_TOKEN, provider="openai")
-th.set_metadata("id", "fabio")
-th.set_metadata("timezone", 5)
+th.set_metadata("id", "fabio")  # metadata is optional based on the tools you are using
+th.set_metadata("timezone", 5)  # metadata is optional based on the tools you are using
 
 client = OpenAI(api_key=TOKEN)
 

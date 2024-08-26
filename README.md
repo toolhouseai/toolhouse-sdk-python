@@ -122,11 +122,115 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
+# Use Local Tools
+To utilize a local tool, you need to define the tool, its JSON schema, and register it with the Toolhouse SDK. Here's a step-by-step guide:
+1. Create the local tool function.
+2. Define the JSON schema for the local tool function.
+3. Register the local tool with the Toolhouse SDK.
+4. Add the local tool to the messages.
+5. Utilize the local tool within the Toolhouse SDK.
+
+Here is a sample code:
+
+```py
+"""OpenAI Sample"""
+import os
+from typing import List
+from dotenv import load_dotenv
+from openai import OpenAI
+from toolhouse import Toolhouse
+load_dotenv()
+
+TOKEN = os.getenv("OPENAI_KEY")
+TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
+
+
+local_tools = [
+    {'type': 'function',
+     'function':
+         {
+             'name': 'hello',
+             'description': 'The user receives a customized hello message from a city and returns it to the user.', 
+             'parameters': {
+                 'type': 'object',
+                 'properties': {
+                     'city': {'type': 'string', 'description': 'The city where you are from'}
+                 }},
+             'required': ['city']
+         }}]
+
+th = Toolhouse(access_token=TH_TOKEN, provider="openai")
+th.set_metadata("id", "fabio")
+th.set_metadata("timezone", 5)
+
+
+@th.register_local_tool("hello")  # the name used to register the tool should be the same as the name in the json schema
+def hello_tool(city: str):
+    """Return a Hello message from a specific city."""
+    return f"Hello from {city}!!!"
+
+
+client = OpenAI(api_key=TOKEN)
+
+messages: List = [{
+    "role": "user",
+    "content":
+        "Can I get a hello from Rome?"
+    }]
+
+response = client.chat.completions.create(
+    model='gpt-4o',
+    messages=messages,
+    tools=th.get_tools() + local_tools
+)
+
+messages += th.run_tools(response)
+
+response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=messages,
+            tools=th.get_tools() + local_tools
+        )
+
+print(response.choices[0].message.content)
+```
+
+# Use Bundles
+Bundles help you define groups of tools you want to pass to the LLM based on specific contextual need. 
+For example, if you want to enhance your LLM's knowledge with live stock market data, you can create a Bundle with a stock price API call, a RAG for stock news, and summarization of SEC filings.
+In order to create a bundle, you need to:
+1. Go to the [Tool Store - Bundles](https://app.toolhouse.ai/bundles) and create a new bundle. eg: "stock_bundle"
+2. Add tools to the bundle.
+3. Use the bundle in the Toolhouse SDK.
+
+Here is a sample code:
+
+```py
+from toolhouse import Toolhouse
+
+th = Toolhouse(access_token=TH_TOKEN, provider="openai")
+th.set_metadata("id", "fabio")
+th.set_metadata("timezone", 5)
+
+messages: List = [{
+    "role": "user",
+    "content": "What is the stock price of Apple?"
+    }]
+
+response = client.chat.completions.create(
+    model='gpt-4o',
+    messages=messages,
+    tools=th.get_tools(bundle="stock_bundle")
+)
+```
+
 # Contributing
 
 We welcome pull requests that add meaningful additions to these code samples, particularly for issues that can expand compability.
 
 You can submit issues (for example for feature requests or improvements) by using the Issues tab.
+
+
 
 # Publishing tools
 

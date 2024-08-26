@@ -54,7 +54,7 @@ class RunToolsRequest(BaseModel):
     Represents a tool call for Toolhouse.
     """
 
-    def __init__(self, content: Content, provider: Provider, metadata: Any, bundle: str, **kwargs):
+    def __init__(self, content: Content, provider: Provider, metadata: Any, bundle: str):
         """
         Initialize RunToolsRequest
         Parameters:

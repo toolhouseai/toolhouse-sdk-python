@@ -12,11 +12,12 @@ class TestRunToolsRequestModel(unittest.TestCase):
     def test_run_tools_request(self):
         # Create RunToolsRequest class instance
         test_model = RunToolsRequest(
-            content={"doloribus": 6}, provider="openai", metadata="foo"
+            content={"doloribus": 6}, provider="openai", metadata="foo", bundle="finance"
         )
         self.assertEqual(test_model.content, {"doloribus": 6})
         self.assertEqual(test_model.provider, "openai")
         self.assertEqual(test_model.metadata, "foo")
+        self.assertEqual(test_model.bundle, "finance")
 
     def test_run_tools_request_required_fields_missing(self):
         # Assert RunToolsRequest class generation fails without required fields

@@ -206,11 +206,21 @@ In order to create a bundle, you need to:
 Here is a sample code:
 
 ```py
+import os
+from typing import List
+from dotenv import load_dotenv
+from openai import OpenAI
 from toolhouse import Toolhouse
+load_dotenv()
+
+TOKEN = os.getenv("OPENAI_KEY")
+TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
 th = Toolhouse(access_token=TH_TOKEN, provider="openai")
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
+
+client = OpenAI(api_key=TOKEN)
 
 messages: List = [{
     "role": "user",

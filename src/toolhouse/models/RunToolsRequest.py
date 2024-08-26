@@ -54,7 +54,7 @@ class RunToolsRequest(BaseModel):
     Represents a tool call for Toolhouse.
     """
 
-    def __init__(self, content: Content, provider: Provider, metadata: Any, **kwargs):
+    def __init__(self, content: Content, provider: Provider, metadata: Any, bundle: str, **kwargs):
         """
         Initialize RunToolsRequest
         Parameters:
@@ -66,3 +66,4 @@ class RunToolsRequest(BaseModel):
         self.content = content
         self.provider = self._enum_matching(provider, Provider.list(), "provider")
         self.metadata = metadata
+        self.bundle = bundle

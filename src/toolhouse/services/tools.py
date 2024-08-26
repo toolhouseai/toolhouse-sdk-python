@@ -15,6 +15,7 @@ from ..models.ToolhouseCallResults import (
 
 
 class Tools(BaseService):
+    """Tools service"""
     def get_tools(self, request_input: GetToolsRequestModel) -> GetToolsResponseModel:
         """
         Get Tools

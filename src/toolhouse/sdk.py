@@ -70,6 +70,7 @@ class Toolhouse:
         self.set_base_url(environment.value if isinstance(
             environment, Environment) else environment)
         self.local_tools: LocalTools = LocalTools()
+        self.bundle: str = "default"
 
     def register_local_tool(self, local_tool):
         """Register Local Tools"""
@@ -120,11 +121,12 @@ class Toolhouse:
         """
         self.tools.set_access_token(token)
 
-    def get_tools(self):
+    def get_tools(self, bundle="default"):
         """
         Get Tools
         """
-        return self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata))
+        self.bundle = bundle
+        return self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle))
 
     def run_tools(self, response, append: bool = True) -> List:
         """
@@ -133,7 +135,6 @@ class Toolhouse:
         ----------
         response : Any
             The response from the provider
-        
         append : bool
             Appends the LLM response to the list of messages in the return value.
 
@@ -165,7 +166,7 @@ class Toolhouse:
                         messages.append(result.model_dump())
                     else:
                         run_tool_request = RunToolsRequest(
-                            tool, self.provider, self.metadata)
+                            tool, self.provider, self.metadata, self.bundle)
                         run_response = self.tools.run_tools(run_tool_request)
                         messages.append(run_response.content)
 
@@ -181,7 +182,7 @@ class Toolhouse:
                         message['content'].append(result.model_dump())
                     else:
                         run_tool_request = RunToolsRequest(
-                            tool, self.provider, self.metadata)
+                            tool, self.provider, self.metadata, self.bundle)
                         run_response = self.tools.run_tools(run_tool_request)
                         output = run_response.content
                         message['content'].append(output)

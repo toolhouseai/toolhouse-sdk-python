@@ -28,7 +28,9 @@ class LocalTools():
             def wrapper(*args, **kwargs):
                 result = func(*args, **kwargs)
                 if not isinstance(result, str):
-                    raise TypeError(f"The function '{local_tool}' did not return a string. Returned type: {type(result).__name__}")
+                    raise TypeError(
+                        f"The function '{local_tool}' did not return a string. Returned type: {type(result).__name__}"
+                        )
                 return result
             # Add the function to the routes dictionary with the given name
             self.local_tools[local_tool] = wrapper
@@ -64,4 +66,3 @@ class LocalTools():
             return OpenAIToolResponse(tool_call_id=tool.id, name=tool.function.name, content=content, role="tool")
         else:
             raise ValueError("Provider not suppoted")
-

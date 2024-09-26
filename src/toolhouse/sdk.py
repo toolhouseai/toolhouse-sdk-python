@@ -10,6 +10,7 @@ Class:
 import os
 from enum import Enum
 from typing import List, Union, Dict, Any, Optional
+from warnings import warn
 
 from .exceptions import ToolhouseError
 from .net.environment import Environment
@@ -37,27 +38,27 @@ class Toolhouse:
         Set the access token
     """
 
-    def __init__(self, access_token: Optional[str] = None,
-                 provider: Union[ProviderModel, str] = ProviderModel.OPENAI,
-                 environment: Environment = Environment.DEFAULT
-                 ) -> None:
+    def __init__(
+        self,
+        access_token: Optional[str] = None,
+        provider: Union[ProviderModel, str] = ProviderModel.OPENAI,
+        environment: Environment = Environment.DEFAULT,
+    ) -> None:
         """
-         Initializes the Toolhouse SDK class.
+        Initializes the Toolhouse SDK class.
 
-         Parameters
-         ----------
-         access_token : str
-             The access token
-         provider : ProviderModel
-             The provider model or name
-         environment : Environment
-             The environment that the SDK is accessing
-         """
+        Parameters
+        ----------
+        access_token : str
+            The access token
+        provider : ProviderModel
+            The provider model or name
+        environment : Environment
+            The environment that the SDK is accessing
+        """
         if not provider:
-            raise ValueError(
-                "Parameter provider is required, cannot be empty or blank.")
-        self.provider = self._enum_matching(
-            provider, ProviderModel.list(), "provider")
+            raise ValueError("Parameter provider is required, cannot be empty or blank.")
+        self.provider = self._enum_matching(provider, ProviderModel.list(), "provider")
         if access_token is None:
             access_token = os.environ.get("TOOLHOUSE_API_KEY", None)
         if access_token is None:
@@ -67,8 +68,7 @@ class Toolhouse:
         self.api_key = access_token
         self.tools = Tools(access_token)
         self.metadata: Dict[str, Any] = {}
-        self.set_base_url(environment.value if isinstance(
-            environment, Environment) else environment)
+        self.set_base_url(environment.value if isinstance(environment, Environment) else environment)
         self.local_tools: LocalTools = LocalTools()
         self.bundle: str = "default"
 
@@ -96,8 +96,7 @@ class Toolhouse:
         provider : ProviderModel
             The provider model or name
         """
-        self.provider = self._enum_matching(
-            provider, ProviderModel.list(), "provider")
+        self.provider = self._enum_matching(provider, ProviderModel.list(), "provider")
 
     def set_base_url(self, url: str) -> None:
         """
@@ -126,7 +125,13 @@ class Toolhouse:
         Get Tools
         """
         self.bundle = bundle
-        return self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle))
+        res = self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle))
+        if bundle != "default" and len(res) == 0:
+            warn(
+                "Warning: get_tools() was called, but the tool bundle does not contain any tools."
+                "Please verify that the bundle includes the required tools before proceeding."
+            )
+        return res
 
     def run_tools(self, response, append: bool = True) -> List:
         """
@@ -150,14 +155,14 @@ class Toolhouse:
                 response = stream_to_chat_completion(response)
                 if response is None:
                     return []
-            if response.choices[0].finish_reason != 'tool_calls':
+            if response.choices[0].finish_reason != "tool_calls":
                 return []
             response_message = response.choices[0].message
             if append:
                 msg = response_message.model_dump()
                 del msg["function_call"]
                 messages.append(msg)
-            tool_calls = getattr(response_message, 'tool_calls', None)
+            tool_calls = getattr(response_message, "tool_calls", None)
 
             if tool_calls:
                 for tool in tool_calls:
@@ -165,30 +170,28 @@ class Toolhouse:
                         result = self.local_tools.run_tools(tool)
                         messages.append(result.model_dump())
                     else:
-                        run_tool_request = RunToolsRequest(
-                            tool, self.provider, self.metadata, self.bundle)
+                        run_tool_request = RunToolsRequest(tool, self.provider, self.metadata, self.bundle)
                         run_response = self.tools.run_tools(run_tool_request)
                         messages.append(run_response.content)
 
         elif self.provider in ("anthropic", ProviderModel.ANTHROPIC):
-            if response.stop_reason != 'tool_use':
+            if response.stop_reason != "tool_use":
                 return []
 
-            message: dict = {'role': 'user', 'content': []}
+            message: dict = {"role": "user", "content": []}
             for tool in response.content:
                 if tool.type == "tool_use":
                     if tool.name in self.local_tools.get_registered_tools():
                         result = self.local_tools.run_tools(tool)
-                        message['content'].append(result.model_dump())
+                        message["content"].append(result.model_dump())
                     else:
-                        run_tool_request = RunToolsRequest(
-                            tool, self.provider, self.metadata, self.bundle)
+                        run_tool_request = RunToolsRequest(tool, self.provider, self.metadata, self.bundle)
                         run_response = self.tools.run_tools(run_tool_request)
                         output = run_response.content
-                        message['content'].append(output)
-            if message['content']:
+                        message["content"].append(output)
+            if message["content"]:
                 if append:
-                    messages.append({'role': 'assistant', 'content': response.content})
+                    messages.append({"role": "assistant", "content": response.content})
                 messages.append(message)
 
         else:
@@ -197,13 +200,9 @@ class Toolhouse:
         return messages
 
     @classmethod
-    def _enum_matching(
-        cls, value: Union[str, Enum], enum_values: List[str], variable_name: str
-    ):
+    def _enum_matching(cls, value: Union[str, Enum], enum_values: List[str], variable_name: str):
         str_value = value.value if isinstance(value, Enum) else value
         if str_value in enum_values:
             return value
         else:
-            raise ValueError(
-                f"Invalid value for {variable_name}: must match one of {enum_values}"
-            )
+            raise ValueError(f"Invalid value for {variable_name}: must match one of {enum_values}")

@@ -40,10 +40,10 @@ class Toolhouse:
 
     def __init__(
         self,
-        access_token: Optional[str] = None,
         api_key: Optional[str] = None,
         provider: Union[ProviderModel, str] = ProviderModel.OPENAI,
         environment: Environment = Environment.DEFAULT,
+        access_token: Optional[str] = None,
     ) -> None:
         """
         Initializes the Toolhouse SDK class.

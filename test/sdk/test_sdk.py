@@ -11,6 +11,7 @@ class TestSDK(unittest.TestCase):
     def test_true(self):
         self.assertTrue(True)  # pylint: disable=W1503
 
+    @mock.patch.dict(os.environ, {}, clear=True)
     def test_sdk_api_exception(self):
         with self.assertRaises(ToolhouseError):
             Toolhouse()

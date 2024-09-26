@@ -37,16 +37,16 @@ class BaseService:
 
     _http = HTTPClient(None)
 
-    def __init__(self, access_token: str) -> None:
+    def __init__(self, api_key: str) -> None:
         """
         Initialize client
 
         Parameters:
         ----------
-           access_token : str
-                A Access access token
+           api_key : str
+                A Api key
         """
-        self._access_token = access_token
+        self._api_key = api_key
 
     @classmethod
     def _pattern_matching(cls, value: str, pattern: str, variable_name: str):
@@ -78,16 +78,16 @@ class BaseService:
         """
         self._url_prefix = url
 
-    def set_access_token(self, token: str) -> None:
+    def set_api_key(self, api_key: str) -> None:
         """
         Sets access token key
 
         Parameters
         ----------
-        token: string
-            Access token value
+        api_key: string
+            API key value
         """
-        self._access_token = token
+        self._api_key = api_key
 
     def _add_required_headers(self, headers: dict):
         """
@@ -99,5 +99,5 @@ class BaseService:
             Headers dict to add auth headers to
         """
         headers["User-Agent"] = f"Toolhouse/1.0.0 Python/{platform.python_version()}"
-        headers["Authorization"] = f"Bearer {self._access_token}"
+        headers["Authorization"] = f"Bearer {self._api_key}"
         return headers

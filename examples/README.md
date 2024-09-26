@@ -40,11 +40,11 @@ Alternatively, you can set the API key when you initialize the SDK. You can do t
 tools = Toolhouse('YOUR_API_KEY')
 ```
 
-You can also use the `set_access_token` method:
+You can also use the `set_api_key` method:
 
 ```py
 tools = Toolhouse()
-tools.set_access_token('YOUR_API_KEY')
+tools.set_api_key('YOUR_API_KEY')
 ```
 
 Our [Quick start guide](https://docs.toolhouse.ai/toolhouse/quick-start) has all you need to get you set up quickly.

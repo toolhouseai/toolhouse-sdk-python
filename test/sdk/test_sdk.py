@@ -32,6 +32,10 @@ class TestSDK(unittest.TestCase):
     def test_access_token(self):
         th = Toolhouse(access_token="123")
         assert th.api_key == "123"
+        
+    def test_api_key(self):
+        th = Toolhouse(api_key="123")
+        assert th.api_key == "123"
 
     @mock.patch.dict(os.environ, {"TOOLHOUSE_API_KEY": "345"}, clear=True)
     def test_access_key_from_env(self):

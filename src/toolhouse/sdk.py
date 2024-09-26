@@ -19,6 +19,7 @@ from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
 from .models.Stream import ToolhouseStreamStorage, GroqStream, OpenAIStream, stream_to_chat_completion
+from warnings import warn
 
 
 class Toolhouse:
@@ -33,42 +34,45 @@ class Toolhouse:
     -------
     set_base_url(url: str)
         Sets the end URL
-    set_access_token(access_token)
-        Set the access token
+    set_api_key(api_key)
+        Set the api_key
     """
 
-    def __init__(self, access_token: Optional[str] = None,
-                 provider: Union[ProviderModel, str] = ProviderModel.OPENAI,
-                 environment: Environment = Environment.DEFAULT
-                 ) -> None:
+    def __init__(
+        self,
+        access_token: Optional[str] = None,
+        api_key: Optional[str] = None,
+        provider: Union[ProviderModel, str] = ProviderModel.OPENAI,
+        environment: Environment = Environment.DEFAULT,
+    ) -> None:
         """
-         Initializes the Toolhouse SDK class.
+        Initializes the Toolhouse SDK class.
 
-         Parameters
-         ----------
-         access_token : str
-             The access token
-         provider : ProviderModel
-             The provider model or name
-         environment : Environment
-             The environment that the SDK is accessing
-         """
+        Parameters
+        ----------
+        api_key : str
+            The API key
+        provider : ProviderModel
+            The provider model or name
+        environment : Environment
+            The environment that the SDK is accessing
+        """
         if not provider:
-            raise ValueError(
-                "Parameter provider is required, cannot be empty or blank.")
-        self.provider = self._enum_matching(
-            provider, ProviderModel.list(), "provider")
-        if access_token is None:
-            access_token = os.environ.get("TOOLHOUSE_API_KEY", None)
-        if access_token is None:
+            raise ValueError("Parameter provider is required, cannot be empty or blank.")
+        self.provider = self._enum_matching(provider, ProviderModel.list(), "provider")
+        if access_token is not None and api_key is None:
+            warn("access_token property will be deprecated on next major release, please use api_key instead")
+            api_key = access_token
+        if access_token is None and api_key is None:
+            api_key = os.environ.get("TOOLHOUSE_API_KEY", None)
+        if api_key is None:
             raise ToolhouseError(
-                "The access_token client option must be set either by passing access_token to the SDK or by setting the TOOLHOUSE_API_KEY environment variable"
+                "The api_key client option must be set either by passing api_key to the SDK or by setting the TOOLHOUSE_API_KEY environment variable"
             )
-        self.api_key = access_token
-        self.tools = Tools(access_token)
+        self.api_key = api_key
+        self.tools = Tools(api_key)
         self.metadata: Dict[str, Any] = {}
-        self.set_base_url(environment.value if isinstance(
-            environment, Environment) else environment)
+        self.set_base_url(environment.value if isinstance(environment, Environment) else environment)
         self.local_tools: LocalTools = LocalTools()
         self.bundle: str = "default"
 
@@ -96,8 +100,7 @@ class Toolhouse:
         provider : ProviderModel
             The provider model or name
         """
-        self.provider = self._enum_matching(
-            provider, ProviderModel.list(), "provider")
+        self.provider = self._enum_matching(provider, ProviderModel.list(), "provider")
 
     def set_base_url(self, url: str) -> None:
         """
@@ -119,7 +122,19 @@ class Toolhouse:
         token: string
             Auth token value
         """
-        self.tools.set_access_token(token)
+        warn("This method will be deprecated please use set_api_key instead")
+        self.tools.set_api_key(token)
+
+    def set_api_key(self, api_key: str) -> None:
+        """
+        Sets api key
+
+        Parameters
+        ----------
+        api_key: string
+            Api key value
+        """
+        self.tools.set_api_key(api_key)
 
     def get_tools(self, bundle="default"):
         """
@@ -150,14 +165,14 @@ class Toolhouse:
                 response = stream_to_chat_completion(response)
                 if response is None:
                     return []
-            if response.choices[0].finish_reason != 'tool_calls':
+            if response.choices[0].finish_reason != "tool_calls":
                 return []
             response_message = response.choices[0].message
             if append:
                 msg = response_message.model_dump()
                 del msg["function_call"]
                 messages.append(msg)
-            tool_calls = getattr(response_message, 'tool_calls', None)
+            tool_calls = getattr(response_message, "tool_calls", None)
 
             if tool_calls:
                 for tool in tool_calls:
@@ -165,30 +180,28 @@ class Toolhouse:
                         result = self.local_tools.run_tools(tool)
                         messages.append(result.model_dump())
                     else:
-                        run_tool_request = RunToolsRequest(
-                            tool, self.provider, self.metadata, self.bundle)
+                        run_tool_request = RunToolsRequest(tool, self.provider, self.metadata, self.bundle)
                         run_response = self.tools.run_tools(run_tool_request)
                         messages.append(run_response.content)
 
         elif self.provider in ("anthropic", ProviderModel.ANTHROPIC):
-            if response.stop_reason != 'tool_use':
+            if response.stop_reason != "tool_use":
                 return []
 
-            message: dict = {'role': 'user', 'content': []}
+            message: dict = {"role": "user", "content": []}
             for tool in response.content:
                 if tool.type == "tool_use":
                     if tool.name in self.local_tools.get_registered_tools():
                         result = self.local_tools.run_tools(tool)
-                        message['content'].append(result.model_dump())
+                        message["content"].append(result.model_dump())
                     else:
-                        run_tool_request = RunToolsRequest(
-                            tool, self.provider, self.metadata, self.bundle)
+                        run_tool_request = RunToolsRequest(tool, self.provider, self.metadata, self.bundle)
                         run_response = self.tools.run_tools(run_tool_request)
                         output = run_response.content
-                        message['content'].append(output)
-            if message['content']:
+                        message["content"].append(output)
+            if message["content"]:
                 if append:
-                    messages.append({'role': 'assistant', 'content': response.content})
+                    messages.append({"role": "assistant", "content": response.content})
                 messages.append(message)
 
         else:
@@ -197,13 +210,9 @@ class Toolhouse:
         return messages
 
     @classmethod
-    def _enum_matching(
-        cls, value: Union[str, Enum], enum_values: List[str], variable_name: str
-    ):
+    def _enum_matching(cls, value: Union[str, Enum], enum_values: List[str], variable_name: str):
         str_value = value.value if isinstance(value, Enum) else value
         if str_value in enum_values:
             return value
         else:
-            raise ValueError(
-                f"Invalid value for {variable_name}: must match one of {enum_values}"
-            )
+            raise ValueError(f"Invalid value for {variable_name}: must match one of {enum_values}")

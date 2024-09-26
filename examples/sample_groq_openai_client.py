@@ -5,17 +5,17 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from toolhouse import Toolhouse
 
+#  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
 TOKEN = os.getenv("GROQCLOUD_API_KEY")
-TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
 client = OpenAI(
     api_key=TOKEN,
     base_url="https://api.groq.com/openai/v1"
 )
 
-th = Toolhouse(access_token=TH_TOKEN, provider="openai")
+th = Toolhouse(provider="openai")
 
 messages: List = [{
     "role": "user",

@@ -40,11 +40,11 @@ Alternatively, you can set the API key when you initialize the SDK. You can do t
 tools = Toolhouse('YOUR_API_KEY')
 ```
 
-You can also use the `set_access_token` method:
+You can also use the `set_api_key` method:
 
 ```py
 tools = Toolhouse()
-tools.set_access_token('YOUR_API_KEY')
+tools.set_api_key('YOUR_API_KEY')
 ```
 
 Our [Quick start guide](https://docs.toolhouse.ai/toolhouse/quick-start) has all you need to get you set up quickly.
@@ -139,11 +139,9 @@ from typing import List
 from dotenv import load_dotenv
 from openai import OpenAI
 from toolhouse import Toolhouse
+
+#  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
-
-TOKEN = os.getenv("OPENAI_KEY")
-TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
-
 
 local_tools = [
     {'type': 'function',
@@ -159,7 +157,7 @@ local_tools = [
              'required': ['city']
          }}]
 
-th = Toolhouse(access_token=TH_TOKEN, provider="openai")
+th = Toolhouse(provider="openai")
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
 
@@ -170,7 +168,7 @@ def hello_tool(city: str):
     return f"Hello from {city}!!!"
 
 
-client = OpenAI(api_key=TOKEN)
+client = OpenAI()
 
 messages: List = [{
     "role": "user",
@@ -211,16 +209,15 @@ from typing import List
 from dotenv import load_dotenv
 from openai import OpenAI
 from toolhouse import Toolhouse
+
+#  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
-TOKEN = os.getenv("OPENAI_KEY")
-TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
-
-th = Toolhouse(access_token=TH_TOKEN, provider="openai")
+th = Toolhouse(provider="openai")
 th.set_metadata("id", "fabio")  # metadata is optional based on the tools you are using
 th.set_metadata("timezone", 5)  # metadata is optional based on the tools you are using
 
-client = OpenAI(api_key=TOKEN)
+client = OpenAI()
 
 messages: List = [{
     "role": "user",

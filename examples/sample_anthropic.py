@@ -1,20 +1,16 @@
 """Antropic Sample"""
-import os
 from typing import List
 
 from dotenv import load_dotenv
 from anthropic import Anthropic
 from toolhouse import Toolhouse, Provider
 
+#  Make sure to setup the .env as .env.example
 load_dotenv()
 
-TOKEN = os.getenv("ANTHROPIC_KEY")
-TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
+client = Anthropic()
 
-
-client = Anthropic(api_key=TOKEN)
-
-th = Toolhouse(access_token=TH_TOKEN, provider=Provider.ANTHROPIC)
+th = Toolhouse(provider=Provider.ANTHROPIC)
 
 messages: List = [{
     "role": "user",

@@ -25,7 +25,7 @@ class BaseService:
 
     Methods
     -------
-    set_access_token(token: str) -> None:
+    set_api_key(token: str) -> None:
         Sets bearer token key
     def _add_required_headers(headers: dict):
         Request authorization headers
@@ -98,6 +98,6 @@ class BaseService:
         headers: dict
             Headers dict to add auth headers to
         """
-        headers["User-Agent"] = f"Toolhouse/1.0.0 Python/{platform.python_version()}"
+        headers["User-Agent"] = f"Toolhouse/1.2.1 Python/{platform.python_version()}"
         headers["Authorization"] = f"Bearer {self._api_key}"
         return headers

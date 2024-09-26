@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from anthropic import Anthropic
 from toolhouse import Toolhouse, Provider
 
-#  Make sure to setup the .env as .env.example
+#  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
 client = Anthropic()

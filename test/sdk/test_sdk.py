@@ -11,6 +11,7 @@ class TestSDK(unittest.TestCase):
     def test_true(self):
         self.assertTrue(True)  # pylint: disable=W1503
 
+    @mock.patch.dict(os.environ, {}, clear=True)
     def test_sdk_api_exception(self):
         with self.assertRaises(ToolhouseError):
             Toolhouse()
@@ -31,6 +32,10 @@ class TestSDK(unittest.TestCase):
 
     def test_access_token(self):
         th = Toolhouse(access_token="123")
+        assert th.api_key == "123"
+        
+    def test_api_key(self):
+        th = Toolhouse(api_key="123")
         assert th.api_key == "123"
 
     @mock.patch.dict(os.environ, {"TOOLHOUSE_API_KEY": "345"}, clear=True)

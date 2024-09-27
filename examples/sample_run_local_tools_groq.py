@@ -4,10 +4,11 @@ from typing import List
 from dotenv import load_dotenv
 from groq import Groq
 from toolhouse import Toolhouse
+
+#  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
 TOKEN = os.getenv("GROQCLOUD_API_KEY")
-TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
 
 local_tools = [
@@ -24,7 +25,7 @@ local_tools = [
              'required': ['city']
          }}]
 
-th = Toolhouse(access_token=TH_TOKEN, provider="openai")
+th = Toolhouse(provider="openai")
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
 

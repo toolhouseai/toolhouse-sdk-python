@@ -1,33 +1,32 @@
 """OpenAI Sample"""
-import os
 from typing import List
 from dotenv import load_dotenv
 from openai import OpenAI
 from toolhouse import Toolhouse
 from toolhouse.models.Stream import ToolhouseStreamStorage
 
+#  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
-TOKEN = os.getenv("OPENAI_KEY")
-TH_TOKEN = os.getenv("TOOLHOUSE_BEARER_TOKEN")
 
-client = OpenAI(api_key=TOKEN)
+client = OpenAI()
 
 local_tools = [
-    {'type': 'function',
-     'function':
-         {
-             'name': 'hello',
-             'description': 'The user receives a customized hello message from a city and returns it to the user.', 
-             'parameters': {
-                 'type': 'object',
-                 'properties': {
-                     'city': {'type': 'string', 'description': 'The city where you are from'}
-                 }},
-             'required': ['city']
-         }}]
+    {
+        "type": "function",
+        "function": {
+            "name": "hello",
+            "description": "The user receives a customized hello message from a city and returns it to the user.",
+            "parameters": {
+                "type": "object",
+                "properties": {"city": {"type": "string", "description": "The city where you are from"}},
+            },
+            "required": ["city"],
+        },
+    }
+]
 
-th = Toolhouse(access_token=TH_TOKEN, provider="openai")
+th = Toolhouse(provider="openai")
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
 
@@ -38,18 +37,11 @@ def hello_tool(city: str):
     return f"Hello from {city}!!!"
 
 
-messages: List = [{
-    "role": "user",
-    "content":
-        "Can I get a hello from Rome?"
-    }]
+messages: List = [{"role": "user", "content": "Can I get a hello from Rome?"}]
 
 
 stream = client.chat.completions.create(
-    model='gpt-4o',
-    messages=messages,
-    tools=th.get_tools() + local_tools,
-    stream=True
+    model="gpt-4o", messages=messages, tools=th.get_tools() + local_tools, stream=True
 )
 
 # Use the stream and save blocks
@@ -60,9 +52,5 @@ for block in stream:  # pylint: disable=E1133
 
 messages += th.run_tools(stream_storage)
 
-response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=messages,
-            tools=th.get_tools() + local_tools
-        )
+response = client.chat.completions.create(model="gpt-4o", messages=messages, tools=th.get_tools() + local_tools)
 print(response.choices[0].message.content)

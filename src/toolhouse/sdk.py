@@ -10,6 +10,7 @@ Class:
 import os
 from enum import Enum
 from typing import List, Union, Dict, Any, Optional
+from warnings import warn
 
 from .exceptions import ToolhouseError
 from .net.environment import Environment
@@ -19,7 +20,6 @@ from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
 from .models.Stream import ToolhouseStreamStorage, GroqStream, OpenAIStream, stream_to_chat_completion
-from warnings import warn
 
 
 class Toolhouse:
@@ -141,7 +141,13 @@ class Toolhouse:
         Get Tools
         """
         self.bundle = bundle
-        return self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle))
+        res = self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle))
+        if bundle != "default" and len(res) == 0:
+            warn(
+                "Warning: get_tools() was called, but the tool bundle does not contain any tools."
+                "Please verify that the bundle includes the required tools before proceeding."
+            )
+        return res
 
     def run_tools(self, response, append: bool = True) -> List:
         """

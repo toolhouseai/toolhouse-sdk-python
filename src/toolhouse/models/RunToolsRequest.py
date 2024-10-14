@@ -7,6 +7,7 @@ from typing import Union
 from .AnthropicToolCall import AnthropicToolCall
 from .OpenAiAssistantsToolCall import OpenAiAssistantsToolCall
 from .OpenAiToolCall import OpenAiToolCall
+from .GenericToolCall import GenericToolCall
 from .Provider import Provider
 
 
@@ -22,21 +23,28 @@ def returnOpenAiToolCall(input_data):
     return OpenAiToolCall(**input_data)
 
 
+def returnGenericToolCall(input_data):
+    return GenericToolCall(**input_data)
+
+
 class ContentGuard(BaseModel):
     required_lists: dict = {
         "AnthropicToolCall": ["id", "input_", "name", "type"],
         "OpenAiAssistantsToolCall": ["id", "function", "type"],
         "OpenAiToolCall": ["id", "function"],
+        "GenericToolCall": ["input", "name"],
     }
     optional_lists: dict = {
         "AnthropicToolCall": [],
         "OpenAiAssistantsToolCall": [],
         "OpenAiToolCall": [],
+        "GenericToolCall": [],
     }
     class_list: dict = {
         "AnthropicToolCall": returnAnthropicToolCall,
         "OpenAiAssistantsToolCall": returnOpenAiAssistantsToolCall,
         "OpenAiToolCall": returnOpenAiToolCall,
+        "GenericToolCall": returnGenericToolCall,
     }
 
     @classmethod
@@ -46,7 +54,7 @@ class ContentGuard(BaseModel):
         )
 
 
-Content = Union[AnthropicToolCall, OpenAiAssistantsToolCall, OpenAiToolCall]
+Content = Union[AnthropicToolCall, OpenAiAssistantsToolCall, OpenAiToolCall, GenericToolCall]
 
 
 class RunToolsRequest(BaseModel):

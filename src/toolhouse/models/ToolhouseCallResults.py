@@ -7,18 +7,35 @@ from enum import Enum
 from .AnthropicToolCallResults import AnthropicToolCallResults
 from .OpenAiToolCallResults import OpenAiToolCallResults
 from .OpenAiToolAssistantsCallResults import OpenAiToolAssistantsCallResults
+from .GenericToolCallResults import GenericToolCallResults
 
 
 def returnAnthropicToolCallResults(input_data):
+    """
+    Returns an instance of AnthropicToolCallResults
+    """
     return AnthropicToolCallResults(**input_data)
 
 
 def returnOpenAiToolCallResults(input_data):
+    """
+    Returns an instance of OpenAiToolCallResults
+    """
     return OpenAiToolCallResults(**input_data)
 
 
 def returnOpenAiToolAssistantsCallResults(input_data):
+    """
+    Returns an instance of OpenAiToolAssistantsCallResults
+    """
     return OpenAiToolAssistantsCallResults(**input_data)
+
+
+def returnGenericToolCallResults(input_data):
+    """
+    Returns an instance of GenericToolCallResults
+    """
+    return GenericToolCallResults(**input_data)
 
 
 class ContentGuard(BaseModel):
@@ -26,16 +43,19 @@ class ContentGuard(BaseModel):
         "AnthropicToolCallResults": ["tool_use_id", "content", "type"],
         "OpenAiToolCallResults": ["role", "tool_call_id", "name", "content"],
         "OpenAiToolAssistantsCallResults": ["tool_call_id", "output"],
+        "GenericToolCallResults": ["content"],
     }
-    optional_lists = {
+    optional_lists: dict[str, list[str]] = {
         "AnthropicToolCallResults": [],
         "OpenAiToolCallResults": [],
         "OpenAiToolAssistantsCallResults": [],
+        "GenericToolCallResults": [],
     }
     class_list = {
         "AnthropicToolCallResults": returnAnthropicToolCallResults,
         "OpenAiToolCallResults": returnOpenAiToolCallResults,
         "OpenAiToolAssistantsCallResults": returnOpenAiToolAssistantsCallResults,
+        "GenericToolCallResults": returnGenericToolCallResults,
     }
 
     @classmethod
@@ -46,7 +66,7 @@ class ContentGuard(BaseModel):
 
 
 Content = Union[
-    AnthropicToolCallResults, OpenAiToolCallResults, OpenAiToolAssistantsCallResults
+    AnthropicToolCallResults, OpenAiToolCallResults, OpenAiToolAssistantsCallResults, GenericToolCallResults
 ]
 
 
@@ -54,6 +74,8 @@ class Provider(Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     OPENAI_ASSISTANTS = "openai_assistants"
+    LLAMA_INDEX = "llama_index"
+    
 
     def list():
         return list(map(lambda x: x.value, Provider._member_map_.values()))

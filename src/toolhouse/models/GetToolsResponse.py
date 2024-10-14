@@ -6,6 +6,7 @@ from typing import List
 from typing import Any
 from .AntropicTools import AntropicTools
 from .OpenAiTools import OpenAiTools
+from .GenericTools import GenericTools
 
 GetToolsResponse1 = List[AntropicTools]
 
@@ -19,6 +20,13 @@ GetToolsResponse2 = List[OpenAiTools]
 
 def returnGetToolsResponse2(input_data):
     return GetToolsResponse2(**input_data)
+
+
+GetToolsResponse3 = List[GenericTools]
+
+
+def returnGetToolsResponse3(input_data):
+    return GetToolsResponse3(**input_data)
 
 
 class GetToolsResponseGuard(BaseModel):

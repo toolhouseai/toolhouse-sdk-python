@@ -19,28 +19,28 @@ class LlamaIndex():
         """Get all tools from Toolhouse"""
         llama_tools = []
         for tool in tools:
-            llama_tool = self.generate_tool(self.service, tool, request)
+            llama_tool = self.generate_tool(tool, request)
             llama_tools.append(llama_tool)
         return llama_tools
 
-    def generate_tool(self, service: Tools, tool, request):
+    def generate_tool(self, tool, request):
         """Generate a tool for LlamaIndex"""
         arguments = tool["arguments"]
         schema = self._generate_tool_schema(arguments)
         model = self._create_model(tool["name"], schema)
         return FunctionTool.from_defaults(
-            fn=self._generate_function(service, tool["name"], request),
+            fn=self._generate_function(tool["name"], request),
             name=tool["name"],
             description=tool["description"],
             return_direct=True,
             fn_schema=model
         )
 
-    def _generate_function(self, service: Tools, tool_name: str, request: GetToolsRequest):
+    def _generate_function(self, tool_name: str, request: GetToolsRequest):
         def wrapper(*args, **kwargs):
             tool = GenericToolCall(kwargs, tool_name)
             run_tools_request = RunToolsRequest(tool, Provider.LLAMAINDEX, request.metadata, request.bundle)
-            run_response = service.run_tools(run_tools_request)
+            run_response = self.service.run_tools(run_tools_request)
             return run_response.content
         return wrapper
 

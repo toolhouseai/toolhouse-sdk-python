@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict
 from pydantic import create_model
 from pydantic.fields import FieldInfo
 from llama_index.core.tools import FunctionTool

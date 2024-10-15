@@ -19,6 +19,7 @@ from .services.llamaindex import LlamaIndex
 from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
+from .models.GenericTools import GenericTools, GenericArgument
 from .models.Stream import ToolhouseStreamStorage, GroqStream, OpenAIStream, stream_to_chat_completion
 from warnings import warn
 

@@ -4,8 +4,8 @@ from toolhouse.models.GenericTools import GenericTools, GenericArgument
 from llama_index.core.tools import FunctionTool
 from toolhouse import Toolhouse
 
-arg = GenericArgument(**{'name': 'code_str', 'type': 'string', 'description': 'The code to execute. Only Python is supported at the moment.', 'required': True})
-tool = GenericTools(**{'name': 'code_interpreter', 'title': 'Code interpreter', 'description': 'Allows you to run the code you generate.', 'arguments': [arg]})
+arg = {'name': 'code_str', 'type': 'string', 'description': 'The code to execute. Only Python is supported at the moment.', 'required': True}
+tool = {'name': 'code_interpreter', 'title': 'Code interpreter', 'description': 'Allows you to run the code you generate.', 'arguments': [arg]}
 
 
 class TestLlamaIndex(unittest.TestCase):

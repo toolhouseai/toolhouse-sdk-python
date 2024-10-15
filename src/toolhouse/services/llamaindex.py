@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Dict, Any
 from pydantic import create_model
 from pydantic.fields import FieldInfo
 from llama_index.core.tools import FunctionTool
 from toolhouse.services.tools import Tools
-from toolhouse.models.GenericTools import GenericTools, GenericArgument
+from toolhouse.models.GenericTools import GenericTools
 from toolhouse.models.RunToolsRequest import RunToolsRequest
-from toolhouse.models.GenericToolCall import GenericToolCall, Input
+from toolhouse.models.GenericToolCall import GenericToolCall
 from toolhouse.models.Provider import Provider
 from toolhouse.models.GetToolsRequest import GetToolsRequest
 
@@ -23,20 +23,20 @@ class LlamaIndex():
             llama_tools.append(llama_tool)
         return llama_tools
 
-    def generate_tool(self, service: Tools, tool: GenericTools, request: GetToolsRequest):
+    def generate_tool(self, service: Tools, tool, request):
         """Generate a tool for LlamaIndex"""
         arguments = tool["arguments"]
         schema = self._generate_tool_schema(arguments)
         model = self._create_model(tool["name"], schema)
         return FunctionTool.from_defaults(
-            fn=self._generate_function(service, tool["name"], request, arguments),
+            fn=self._generate_function(service, tool["name"], request),
             name=tool["name"],
             description=tool["description"],
             return_direct=True,
             fn_schema=model
         )
 
-    def _generate_function(self, service: Tools, tool_name: str, request: GetToolsRequest, arguments: List[GenericArgument]):
+    def _generate_function(self, service: Tools, tool_name: str, request: GetToolsRequest):
         def wrapper(*args, **kwargs):
             tool = GenericToolCall(kwargs, tool_name)
             run_tools_request = RunToolsRequest(tool, Provider.LLAMAINDEX, request.metadata, request.bundle)
@@ -44,7 +44,7 @@ class LlamaIndex():
             return run_response.content
         return wrapper
 
-    def _generate_tool_schema(self, args: List[GenericArgument]):
+    def _generate_tool_schema(self, args: List[Dict]):
         """Generate a tool schema for a given list of arguments"""
         field_definitions = {}
 
@@ -69,8 +69,7 @@ class LlamaIndex():
         """Convert string type to actual type"""
         type_mapping = {
             "string": str,
-            "integer": int,
-            "float": float,
+            "number": float,
             "boolean": bool,
             "array": list,
             "object": dict,

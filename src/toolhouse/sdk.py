@@ -145,7 +145,7 @@ class Toolhouse:
         self.bundle = bundle
         request = GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle)
         tools = self.tools.get_tools(request)
-        if self.provider == ProviderModel.LLAMAINDEX:
+        if self.provider in ("llamaindex", ProviderModel.LLAMAINDEX):
             return self.llama_index.get_tools(tools, request)
         else:
             return tools

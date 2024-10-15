@@ -74,7 +74,7 @@ class Provider(Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     OPENAI_ASSISTANTS = "openai_assistants"
-    LLAMA_INDEX = "llama_index"
+    LLAMA_INDEX = "llamaindex"
     
 
     def list():

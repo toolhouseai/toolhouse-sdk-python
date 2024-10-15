@@ -25,20 +25,20 @@ class LlamaIndex():
 
     def generate_tool(self, service: Tools, tool: GenericTools, request: GetToolsRequest):
         """Generate a tool for LlamaIndex"""
-        schema = self._generate_tool_schema(tool["arguments"])
-        print(schema)
+        arguments = tool["arguments"]
+        schema = self._generate_tool_schema(arguments)
         model = self._create_model(tool["name"], schema)
         return FunctionTool.from_defaults(
-            fn=self._generate_function(service, tool["name"], request),
+            fn=self._generate_function(service, tool["name"], request, arguments),
             name=tool["name"],
             description=tool["description"],
             return_direct=True,
             fn_schema=model
         )
 
-    def _generate_function(self, service: Tools, tool_name: str, request: GetToolsRequest):
-        def wrapper(**kwargs):
-            tool = GenericToolCall(Input(kwargs), tool_name)
+    def _generate_function(self, service: Tools, tool_name: str, request: GetToolsRequest, arguments: List[GenericArgument]):
+        def wrapper(*args, **kwargs):
+            tool = GenericToolCall(kwargs, tool_name)
             run_tools_request = RunToolsRequest(tool, Provider.LLAMAINDEX, request.metadata, request.bundle)
             run_response = service.run_tools(run_tools_request)
             return run_response.content

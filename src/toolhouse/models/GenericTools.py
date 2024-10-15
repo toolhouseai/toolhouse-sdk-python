@@ -1,9 +1,7 @@
 from __future__ import annotations
 from .base import BaseModel
-from typing import TYPE_CHECKING, List
-
-if TYPE_CHECKING:
-    from .GenericArgument import GenericArgument
+from typing import List
+from toolhouse.models.GenericArgument import GenericArgument
 
 
 class GenericTools(BaseModel):

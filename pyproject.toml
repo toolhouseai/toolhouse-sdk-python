@@ -18,7 +18,8 @@ dependencies = [
 	"http-exceptions",
 	"openai",
 	"anthropic",
-	"groq"
+	"groq",
+	"llama-index"
 ]
 requires-python = ">=3.8"
 classifiers = [

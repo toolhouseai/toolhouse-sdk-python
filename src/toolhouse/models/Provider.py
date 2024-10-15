@@ -7,7 +7,7 @@ class Provider(Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     OPENAI_ASSISTANTS = "openai_assistants"
-    LLAMA_INDEX = "llama_index"
+    LLAMAINDEX = "llamaindex"
 
     def list():
         return list(map(lambda x: x.value, Provider._member_map_.values()))

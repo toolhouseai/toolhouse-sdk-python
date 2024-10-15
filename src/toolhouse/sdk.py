@@ -15,6 +15,7 @@ from .exceptions import ToolhouseError
 from .net.environment import Environment
 from .services.tools import Tools
 from .services.local_tools import LocalTools
+from .services.llamaindex import LlamaIndex
 from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
@@ -74,6 +75,7 @@ class Toolhouse:
         self.metadata: Dict[str, Any] = {}
         self.set_base_url(environment.value if isinstance(environment, Environment) else environment)
         self.local_tools: LocalTools = LocalTools()
+        self.llama_index: LlamaIndex = LlamaIndex(self.tools)
         self.bundle: str = "default"
 
     def register_local_tool(self, local_tool):
@@ -141,7 +143,12 @@ class Toolhouse:
         Get Tools
         """
         self.bundle = bundle
-        return self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle))
+        request = GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle)
+        tools = self.tools.get_tools(request)
+        if self.provider == ProviderModel.LLAMAINDEX:
+            return self.llama_index.get_tools(tools, request)
+        else:
+            return tools
 
     def run_tools(self, response, append: bool = True) -> List:
         """

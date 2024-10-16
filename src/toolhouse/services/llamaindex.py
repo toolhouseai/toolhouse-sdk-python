@@ -69,6 +69,7 @@ class LlamaIndex():
         """Convert string type to actual type"""
         type_mapping = {
             "string": str,
+            "integer": int,
             "number": float,
             "boolean": bool,
             "array": list,

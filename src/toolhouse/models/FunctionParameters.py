@@ -4,16 +4,17 @@ from __future__ import annotations
 from .base import BaseModel
 from typing import List
 from enum import Enum
-from typing import TYPE_CHECKING
+# from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from .FunctionParameter import FunctionParameter
+# if TYPE_CHECKING:
+#     from .FunctionParameter import FunctionParameter
 
 
 class Type_(Enum):
     OBJECT = "object"
 
     def list():
+        """List of types"""
         return list(map(lambda x: x.value, Type_._member_map_.values()))
 
 

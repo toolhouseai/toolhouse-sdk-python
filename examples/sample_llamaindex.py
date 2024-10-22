@@ -9,6 +9,7 @@ dotenv.load_dotenv()
 th = Toolhouse(provider="llamaindex")
 th.set_metadata("id", "daniele")
 th.set_metadata("timezone", -8)
+th.set_base_url("https://api.testing.toolhouse.ai/v1")
 # th.bundle = "search and scrape" # optional, only if you want to use bundles
 
 tools = th.get_tools("default")

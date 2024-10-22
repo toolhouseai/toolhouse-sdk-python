@@ -144,8 +144,11 @@ class Toolhouse:
         res = self.tools.get_tools(GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle))
         if bundle != "default" and len(res) == 0:
             warn(
-                "Warning: get_tools() was called, but the tool bundle does not contain any tools."
-                "Please verify that the bundle includes the required tools before proceeding."
+                "Warning: get_tools() was called with the bundle `" + bundle + "`, " +
+                "but the bundle does not contain any tools. This means your LLM will not be able to see any of the tools you have installed.\n" +
+                "To fix this warning:\n" +
+                "Solution 1. Go to https://app.toolhouse.ai/bundles, locate the bundle `" + bundle + "`, then click Edit to add at least one tool.\n " +
+                "Solution 2. Remove the bundle name from the get_tools() call."
             )
         return res
 

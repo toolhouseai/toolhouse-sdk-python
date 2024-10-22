@@ -147,7 +147,7 @@ class Toolhouse:
                 "Warning: get_tools() was called with the bundle `" + bundle + "`, " +
                 "but the bundle does not contain any tools. This means your LLM will not be able to see any of the tools you have installed.\n" +
                 "To fix this warning:\n" +
-                "Solution 1. Go to https://app.toolhouse.ai/bundles, locate the bundle `" + bundle + "`, then click Edit to add at least one tool.\n " +
+                "Solution 1. Go to https://app.toolhouse.ai/bundles, locate the bundle `" + bundle + "`, then click Edit to add at least one tool.\n" +
                 "Solution 2. Remove the bundle name from the get_tools() call."
             )
         return res

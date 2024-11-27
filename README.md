@@ -1,12 +1,35 @@
+![Banner](repository-assets/Banner.png)
+
 # Toolhouse Python SDK
 
-This is the Python SDK for [Toolhouse](https://toolhouse.ai).
+Welcome to the [Toolhouse Python SDK](https://docs.toolhouse.ai/toolhouse/quick-start-python) documentation. This guide will help you get started with integrating and using the SDK in your project.
 
-Toolhouse allows you to unlock the best LLM knowledge and actions. It works across a wide ranges or LLMs and providers. 
+Toolhouse allows you to unlock the best LLM knowledge and actions. It works across a wide ranges or LLMs and providers.
 
 With Toolhouse, you can install tools from the [Tool Store](https://app.toolhouse.ai/store) and execute them in the cloud, without the need to handling their execution locally.
 
 For more details, you can check out our [documentation](https://docs.toolhouse.ai).
+
+![Tool Use](repository-assets/1.png)
+
+## Table of Contents
+
+- [Toolhouse Python SDK](#toolhouse-python-sdk)
+  - [Table of Contents](#table-of-contents)
+  - [About the API](#about-the-api)
+  - [Installation](#installation)
+    - [Getting started](#getting-started)
+    - [Providers](#providers)
+  - [Sample usage](#sample-usage)
+  - [Use Local Tools](#use-local-tools)
+  - [Use Bundles](#use-bundles)
+  - [Contributing](#contributing)
+  - [Publishing tools](#publishing-tools)
+  - [License](#license)
+
+## About the API
+
+The Toolhouse API provides access to various AI-powered tools and services, that you can install from the [Tool Store](https://app.toolhouse.ai/store).
 
 ## Installation
 
@@ -26,11 +49,11 @@ In order to use the SDK, you will need a Toolhouse API key. To get the API key:
 1. Go to your user ➡️ API Keys ([direct link](https://app.toolhouse.ai/settings/api-keys))
 1. Give your API key a name and click Generate.
 
-Copy the API Key and save it where you save your secrets. We'll assume you have a .env file. 
+Copy the API Key and save it where you save your secrets. We'll assume you have a .env file.
 
 We suggest saving your API Key as `TOOLHOUSE_API_KEY` in your environment file. This allows Toolhouse to pick up its value directly in your code.
 
-```
+```bash
 TOOLHOUSE_API_KEY=<Your API Key value>
 ```
 
@@ -51,7 +74,7 @@ Our [Quick start guide](https://docs.toolhouse.ai/toolhouse/quick-start) has all
 
 ### Providers
 
-Toolhouse works with the widest possible range of LLMs across different providers. By default, the Toolhouse API will work with any LLM that is compatible with the OpenAI chat completions API. 
+Toolhouse works with the widest possible range of LLMs across different providers. By default, the Toolhouse API will work with any LLM that is compatible with the OpenAI chat completions API.
 
 You can switch providers when initializing the SDK through the constructor:
 
@@ -76,13 +99,13 @@ pip install python-dotenv
 ```
 
 Create a `.env` and add your API keys there.
-```
+
+```bash
 TOOLHOUSE_API_KEY=
 OPENAI_API_KEY=
 ```
 
 Head over to Toolhouse and install the [Current time tool](https://app.toolhouse.ai/store/current_time).
-
 
 ```py
 import os
@@ -122,8 +145,10 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
-# Use Local Tools
+## Use Local Tools
+
 To utilize a local tool, you need to define the tool, its JSON schema, and register it with the Toolhouse SDK. Here's a step-by-step guide:
+
 1. Create the local tool function.
 2. Define the JSON schema for the local tool function.
 3. Register the local tool with the Toolhouse SDK.
@@ -193,10 +218,13 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
-# Use Bundles
-Bundles help you define groups of tools you want to pass to the LLM based on specific contextual need. 
+## Use Bundles
+
+Bundles help you define groups of tools you want to pass to the LLM based on specific contextual need.
+
 For example, if you want to enhance your LLM's knowledge with live stock market data, you can create a Bundle with a stock price API call, a RAG for stock news, and summarization of SEC filings.
 In order to create a bundle, you need to:
+
 1. Go to the [Tool Store - Bundles](https://app.toolhouse.ai/bundles) and create a new bundle. eg: "stock_bundle"
 2. Add tools to the bundle.
 3. Use the bundle in the Toolhouse SDK.
@@ -231,14 +259,16 @@ response = client.chat.completions.create(
 )
 ```
 
-# Contributing
+## Contributing
 
 We welcome pull requests that add meaningful additions to these code samples, particularly for issues that can expand compability.
 
 You can submit issues (for example for feature requests or improvements) by using the Issues tab.
 
-
-
-# Publishing tools
+## Publishing tools
 
 Developers can also contribute to Toolhouse by publishing tools for the [Tool Store](https://app.toolhouse.ai/store). The Tool Store allows developers to submit their tools and monetize them every time they're executed. Developers and tools must go through an review and approval process, which includes adhering to the Toolhouse Privacy and Data Protection policy. If you're interested in becoming a publisher, [submit your application](https://tally.so/r/wzeO68).
+
+## License
+
+This SDK is licensed under the Apache-2.0 License. See the [LICENSE](LICENSE) file for more details.

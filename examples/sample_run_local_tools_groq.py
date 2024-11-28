@@ -8,7 +8,8 @@ from toolhouse import Toolhouse
 #  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
-TOKEN = os.getenv("GROQCLOUD_API_KEY")
+TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
+GROQ_TOKEN = os.getenv("GROQCLOUD_API_KEY")
 
 
 local_tools = [
@@ -25,7 +26,8 @@ local_tools = [
              'required': ['city']
          }}]
 
-th = Toolhouse(provider="openai")
+# Initialize Toolhouse with the OpenAI provider
+th = Toolhouse(access_token=TH_API_KEY, provider="openai")
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
 
@@ -36,7 +38,7 @@ def hello_tool(city: str):
     return f"Hello from {city}!!!"
 
 
-client = Groq(api_key=TOKEN)
+client = Groq(api_key=GROQ_TOKEN)
 
 messages: List = [{
     "role": "user",
@@ -47,15 +49,16 @@ messages: List = [{
 response = client.chat.completions.create(
     model='llama3-groq-70b-8192-tool-use-preview',
     messages=messages,
-    tools=th.get_tools() + local_tools
+    tools=th.get_tools() + local_tools # Retrieve tools installed from Toolhouse
 )
 
+# Run the tools using the Toolhouse client with the created message
 messages += th.run_tools(response)
 
 response = client.chat.completions.create(
             model='llama3-groq-70b-8192-tool-use-preview',
             messages=messages,
-            tools=th.get_tools() + local_tools
+            tools=th.get_tools() + local_tools # Retrieve tools installed from Toolhouse
         )
 
 print(response.choices[0].message.content)

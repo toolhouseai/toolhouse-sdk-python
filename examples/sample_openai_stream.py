@@ -1,28 +1,33 @@
 """OpenAI Sample"""
+import os
+
 from typing import List
 from dotenv import load_dotenv
 from openai import OpenAI
-from toolhouse import Toolhouse
-from toolhouse.models.Stream import ToolhouseStreamStorage
+from toolhouse import Toolhouse # Import the Toolhouse SDK
+from toolhouse.models.Stream import ToolhouseStreamStorage # Import the Toolhouse Stream Storage
 
 #  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
+TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
+OAI_KEY = os.getenv("OPENAI_API_KEY")
 
-client = OpenAI()
+client = OpenAI(access_token=OAI_KEY)
 
-th = Toolhouse(provider="openai")
+# Initialize Toolhouse with the OpenAI provider
+th = Toolhouse(access_token=TH_API_KEY, provider="openai")
 
 messages: List = [{
     "role": "user",
     "content":
-        "Generate code to calculate the Fibonacci sequence to 100."
-        "Execute it and give me the result"
+        "Scrape data from https://toolhouse.ai and tell me why I should use it."
 }]
 
 stream = client.chat.completions.create(
     model='gpt-4o',
     messages=messages,
+    # Retrieve tools installed from Toolhouse
     tools=th.get_tools(),
     stream=True
 )
@@ -33,11 +38,13 @@ for block in stream:  # pylint: disable=E1133
     print(block)
     stream_storage.add(block)
 
+# Run the tools using the Toolhouse client with the created message
 messages += th.run_tools(stream_storage)
 
 response = client.chat.completions.create(
             model="gpt-4o",
             messages=messages,
+            # Retrieve tools installed from Toolhouse
             tools=th.get_tools()
         )
 print(response.choices[0].message.content)

@@ -3,10 +3,18 @@
 from typing import List
 from dotenv import load_dotenv
 from openai import OpenAI
-from toolhouse import Toolhouse
+from toolhouse import Toolhouse # Import the Toolhouse SDK
 
 #  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
+
+TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
+OAI_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(access_token=OAI_KEY)
+
+# Initialize Toolhouse with the OpenAI provider
+th = Toolhouse(access_token=TH_API_KEY, provider="openai")
 
 
 local_tools = [
@@ -24,6 +32,7 @@ local_tools = [
     }
 ]
 
+# Initialize Toolhouse with the OpenAI provider
 th = Toolhouse(provider="openai")
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
@@ -34,15 +43,12 @@ def hello_tool(city: str):
     """Return a Hello message from a specific city."""
     return f"Hello from {city}!!!"
 
-
-client = OpenAI()
-
 messages: List = [{"role": "user", "content": "Can I get a hello from Rome?"}]
 
-response = client.chat.completions.create(model="gpt-4o", messages=messages, tools=th.get_tools() + local_tools)
+response = client.chat.completions.create(model="gpt-4o", messages=messages, tools=th.get_tools() + local_tools) # Retrieve tools installed from Toolhouse
 
-messages += th.run_tools(response)
+messages += th.run_tools(response) # Run the tools using the Toolhouse client with the created message
 
-response = client.chat.completions.create(model="gpt-4o", messages=messages, tools=th.get_tools() + local_tools)
+response = client.chat.completions.create(model="gpt-4o", messages=messages, tools=th.get_tools() + local_tools) # Retrieve tools installed from Toolhouse
 
 print(response.choices[0].message.content)

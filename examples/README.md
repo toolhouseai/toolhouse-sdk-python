@@ -111,7 +111,7 @@ response = client.chat.completions.create(
     tool_choice="auto"
 )
 
-messages += th.run_tools(response)
+messages += tools.run_tools(response)
 
 response = client.chat.completions.create(
             model="gpt-4o-mini",

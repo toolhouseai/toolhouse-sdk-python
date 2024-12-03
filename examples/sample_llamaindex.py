@@ -11,7 +11,7 @@ dotenv.load_dotenv()
 TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
 
 # Initialize Toolhouse with the Llama Index
-th = Toolhouse(access_token=TH_API_KEY, provider="llamaindex")
+th = Toolhouse(api_key=TH_API_KEY, provider="llamaindex")
 th.set_metadata("id", "daniele")
 th.set_metadata("timezone", -8)
 th.set_base_url("https://api.testing.toolhouse.ai/v1")

@@ -16,7 +16,7 @@ OAI_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(access_token=OAI_KEY)
 
 # Initialize Toolhouse with the OpenAI provider
-th = Toolhouse(access_token=TH_API_KEY, provider="openai")
+th = Toolhouse(api_key=TH_API_KEY, provider="openai")
 
 messages: List = [{
     "role": "user",

@@ -27,7 +27,7 @@ local_tools = [
          }}]
 
 # Initialize Toolhouse with the OpenAI provider
-th = Toolhouse(access_token=TH_API_KEY, provider="openai")
+th = Toolhouse(api_key=TH_API_KEY, provider="openai")
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
 

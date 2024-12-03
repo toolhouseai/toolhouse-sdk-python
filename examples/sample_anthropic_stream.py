@@ -16,7 +16,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 # Initialize Toolhouse with the Anthropic provider
-th = Toolhouse(access_token=TH_API_KEY, provider=Provider.ANTHROPIC)
+th = Toolhouse(api_key=TH_API_KEY, provider=Provider.ANTHROPIC)
 
 # Define the initial messages to be sent to the model
 messages: List = [{

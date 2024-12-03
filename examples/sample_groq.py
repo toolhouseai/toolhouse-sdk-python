@@ -14,7 +14,7 @@ GROQ_TOKEN = os.getenv("GROQCLOUD_API_KEY")
 client = Groq(api_key=GROQ_TOKEN)
 
 # Initialize Toolhouse with the OpenAI provider
-th = Toolhouse(access_token=TH_API_KEY, provider="openai")
+th = Toolhouse(api_key=TH_API_KEY, provider="openai")
 
 messages: List = [{
     "role": "user",

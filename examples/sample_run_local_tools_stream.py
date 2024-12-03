@@ -28,7 +28,7 @@ local_tools = [
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 # Initialize Toolhouse with the Anthropic provider
-th = Toolhouse(access_token=TH_API_KEY, provider=Provider.ANTHROPIC)
+th = Toolhouse(api_key=TH_API_KEY, provider=Provider.ANTHROPIC)
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
 

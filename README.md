@@ -116,8 +116,11 @@ from typing import List
 
 load_dotenv()
 
-client = OpenAI()
-tools = Toolhouse()
+TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
+OAI_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(access_token=OAI_KEY)
+th = Toolhouse(api_key=TH_API_KEY, provider="openai")
 
 #Metadata to convert UTC time to your localtime
 th.set_metadata("timezone", -7)
@@ -130,7 +133,7 @@ messages: List = [{
 response = client.chat.completions.create(
     model='gpt-4o',
     messages=messages,
-    tools=tools.get_tools(),
+    tools=th.get_tools(),
     tool_choice="auto"
 )
 
@@ -139,7 +142,7 @@ messages += th.run_tools(response)
 response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=messages,
-            tools=tools.get_tools(),
+            tools=th.get_tools(),
             tool_choice="auto"
         )
 print(response.choices[0].message.content)
@@ -168,6 +171,9 @@ from toolhouse import Toolhouse
 #  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
+TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
+OAI_KEY = os.getenv("OPENAI_API_KEY")
+
 local_tools = [
     {'type': 'function',
      'function':
@@ -182,7 +188,7 @@ local_tools = [
              'required': ['city']
          }}]
 
-th = Toolhouse(provider="openai")
+th = Toolhouse(api_key=TH_API_KEY, provider="openai")
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
 
@@ -193,7 +199,7 @@ def hello_tool(city: str):
     return f"Hello from {city}!!!"
 
 
-client = OpenAI()
+client = OpenAI(access_token=OAI_KEY)
 
 messages: List = [{
     "role": "user",
@@ -241,11 +247,11 @@ from toolhouse import Toolhouse
 #  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
-th = Toolhouse(provider="openai")
+th = Toolhouse(api_key=TH_API_KEY, provider="openai")
 th.set_metadata("id", "fabio")  # metadata is optional based on the tools you are using
 th.set_metadata("timezone", 5)  # metadata is optional based on the tools you are using
 
-client = OpenAI()
+client = OpenAI(access_token=OAI_KEY)
 
 messages: List = [{
     "role": "user",

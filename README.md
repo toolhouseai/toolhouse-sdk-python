@@ -119,7 +119,7 @@ load_dotenv()
 TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
 OAI_KEY = os.getenv("OPENAI_API_KEY")
 
-client = OpenAI(access_token=OAI_KEY)
+client = OpenAI(api_key=OAI_KEY)
 th = Toolhouse(api_key=TH_API_KEY, provider="openai")
 
 #Metadata to convert UTC time to your localtime
@@ -199,7 +199,7 @@ def hello_tool(city: str):
     return f"Hello from {city}!!!"
 
 
-client = OpenAI(access_token=OAI_KEY)
+client = OpenAI(api_key=OAI_KEY)
 
 messages: List = [{
     "role": "user",
@@ -251,7 +251,7 @@ th = Toolhouse(api_key=TH_API_KEY, provider="openai")
 th.set_metadata("id", "fabio")  # metadata is optional based on the tools you are using
 th.set_metadata("timezone", 5)  # metadata is optional based on the tools you are using
 
-client = OpenAI(access_token=OAI_KEY)
+client = OpenAI(api_key=OAI_KEY)
 
 messages: List = [{
     "role": "user",

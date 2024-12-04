@@ -9,7 +9,7 @@ from toolhouse import Toolhouse
 load_dotenv()
 
 TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
-GROQ_TOKEN = os.getenv("GROQCLOUD_API_KEY")
+GROQ_API_KEY = os.getenv("GROQCLOUD_API_KEY")
 
 
 local_tools = [
@@ -38,7 +38,7 @@ def hello_tool(city: str):
     return f"Hello from {city}!!!"
 
 
-client = Groq(api_key=GROQ_TOKEN)
+client = Groq(api_key=GROQ_API_KEY)
 
 messages: List = [{
     "role": "user",

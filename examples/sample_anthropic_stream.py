@@ -27,7 +27,7 @@ messages: List = [{
     }]
 
 with client.messages.stream(
-    model="gpt-4-turbo",
+    model="claude-3-5-sonnet-20240620",
     max_tokens=1024,
     # Retrieve tools installed from Toolhouse
     tools=th.get_tools(),
@@ -42,7 +42,7 @@ with client.messages.stream(
 
 
 with client.messages.stream(
-            model="gpt-4-turbo",
+            model="claude-3-5-sonnet-20240620",
             max_tokens=1024,
             # Retrieve tools installed from Toolhouse
             tools=th.get_tools(),

@@ -13,7 +13,7 @@ load_dotenv()
 TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
 OAI_KEY = os.getenv("OPENAI_API_KEY")
 
-client = OpenAI(access_token=OAI_KEY)
+client = OpenAI(api_key=OAI_KEY)
 
 # Initialize Toolhouse with the OpenAI provider
 th = Toolhouse(api_key=TH_API_KEY, provider="openai")

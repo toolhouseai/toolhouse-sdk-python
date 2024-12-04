@@ -9,10 +9,10 @@ from toolhouse import Toolhouse # Import the Toolhouse SDK
 load_dotenv()
 
 TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
-GROQ_TOKEN = os.getenv("GROQCLOUD_API_KEY")
+GROQ_API_KEY = os.getenv("GROQCLOUD_API_KEY")
 
 client = OpenAI(
-    api_key=GROQ_TOKEN,
+    api_key=GROQ_API_KEY,
     base_url="https://api.groq.com/openai/v1"
 )
 

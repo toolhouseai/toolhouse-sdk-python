@@ -11,9 +11,9 @@ from toolhouse.models.Stream import ToolhouseStreamStorage # Import the Toolhous
 load_dotenv()
 
 TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
-GROQ_TOKEN = os.getenv("GROQCLOUD_API_KEY")
+GROQ_API_KEY = os.getenv("GROQCLOUD_API_KEY")
 
-client = Groq(api_key=GROQ_TOKEN)
+client = Groq(api_key=GROQ_API_KEY)
 
 local_tools = [
     {
@@ -46,7 +46,7 @@ messages: List = [{"role": "user", "content": "Can I get a hello from Rome?"}]
 
 
 stream = client.chat.completions.create(
-    model="gpt-4o", messages=messages, tools=th.get_tools() + local_tools, stream=True # Retrieve tools installed from Toolhouse
+    model="llama-3.1-70b-versatile", messages=messages, tools=th.get_tools() + local_tools, stream=True # Retrieve tools installed from Toolhouse
 )
 
 # Use the stream and save blocks
@@ -58,5 +58,5 @@ for block in stream:  # pylint: disable=E1133
 # Run the tools using the Toolhouse client with the created message
 messages += th.run_tools(stream_storage)
 
-response = client.chat.completions.create(model="gpt-4o", messages=messages, tools=th.get_tools() + local_tools) # Retrieve tools installed from Toolhouse
+response = client.chat.completions.create(model="llama-3.1-70b-versatile", messages=messages, tools=th.get_tools() + local_tools) # Retrieve tools installed from Toolhouse
 print(response.choices[0].message.content)

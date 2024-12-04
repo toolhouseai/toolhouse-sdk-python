@@ -10,9 +10,9 @@ from toolhouse.models.Stream import ToolhouseStreamStorage
 load_dotenv()
 
 TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
-GROQ_TOKEN = os.getenv("GROQCLOUD_API_KEY")
+GROQ_API_KEY = os.getenv("GROQCLOUD_API_KEY")
 
-client = Groq(api_key=GROQ_TOKEN)
+client = Groq(api_key=GROQ_API_KEY)
 
 # Initialize Toolhouse with the OpenAI provider
 th = Toolhouse(api_key=TH_API_KEY, provider="openai")

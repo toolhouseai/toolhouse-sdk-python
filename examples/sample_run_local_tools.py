@@ -1,15 +1,18 @@
 """Antropic Sample"""
+import os
 
 from typing import List
 
 from dotenv import load_dotenv
 from anthropic import Anthropic
 from anthropic.types import TextBlock
-from toolhouse import Toolhouse, Provider
+from toolhouse import Toolhouse, Provider # Import the Toolhouse SDK
 
 #  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
 
+TH_API_KEY = os.getenv("TOOLHOUSE_API_KEY")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 local_tools = [
     {
@@ -23,9 +26,10 @@ local_tools = [
     }
 ]
 
-client = Anthropic()
+client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
-th = Toolhouse(provider=Provider.ANTHROPIC)
+# Initialize Toolhouse with the Anthropic provider
+th = Toolhouse(api_key=TH_API_KEY, provider=Provider.ANTHROPIC)
 th.set_metadata("id", "fabio")
 th.set_metadata("timezone", 5)
 
@@ -39,13 +43,14 @@ def hello_tool(city: str):
 messages: List = [{"role": "user", "content": "Can I get a hello from Rome?"}]
 
 response = client.messages.create(
-    model="claude-3-5-sonnet-20240620", max_tokens=1024, tools=th.get_tools() + local_tools, messages=messages
+    model="claude-3-5-sonnet-20240620", max_tokens=1024, tools=th.get_tools() + local_tools, messages=messages # Retrieve tools installed from Toolhouse
 )
 
+# Run the tools using the Toolhouse client with the created message
 messages += th.run_tools(response)
 
 response = client.messages.create(
-    model="claude-3-5-sonnet-20240620", max_tokens=1024, tools=th.get_tools() + local_tools, messages=messages
+    model="claude-3-5-sonnet-20240620", max_tokens=1024, tools=th.get_tools() + local_tools, messages=messages # Retrieve tools installed from Toolhouse
 )
 if isinstance(response.content[0], TextBlock):
     print(response.content[0].text)

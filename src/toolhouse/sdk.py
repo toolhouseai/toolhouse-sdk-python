@@ -19,7 +19,12 @@ from .services.llamaindex import LlamaIndex
 from .models.Provider import Provider as ProviderModel
 from .models.RunToolsRequest import RunToolsRequest
 from .models.GetToolsRequest import GetToolsRequest
-from .models.Stream import ToolhouseStreamStorage, GroqStream, OpenAIStream, stream_to_chat_completion
+from .models.Stream import (
+    ToolhouseStreamStorage,
+    GroqStream,
+    OpenAIStream,
+    stream_to_chat_completion,
+)
 from warnings import warn
 
 
@@ -59,10 +64,14 @@ class Toolhouse:
             The environment that the SDK is accessing
         """
         if not provider:
-            raise ValueError("Parameter provider is required, cannot be empty or blank.")
+            raise ValueError(
+                "Parameter provider is required, cannot be empty or blank."
+            )
         self.provider = self._enum_matching(provider, ProviderModel.list(), "provider")
         if access_token is not None and api_key is None:
-            warn("access_token property will be deprecated on next major release, please use api_key instead")
+            warn(
+                "access_token property will be deprecated on next major release, please use api_key instead"
+            )
             api_key = access_token
         if access_token is None and api_key is None:
             api_key = os.environ.get("TOOLHOUSE_API_KEY", None)
@@ -73,7 +82,9 @@ class Toolhouse:
         self.api_key = api_key
         self.tools = Tools(api_key)
         self.metadata: Dict[str, Any] = {}
-        self.set_base_url(environment.value if isinstance(environment, Environment) else environment)
+        self.set_base_url(
+            environment.value if isinstance(environment, Environment) else environment
+        )
         self.local_tools: LocalTools = LocalTools()
         self.llama_index: LlamaIndex = LlamaIndex(self.tools)
         self.bundle: str = "default"
@@ -143,7 +154,9 @@ class Toolhouse:
         Get Tools
         """
         self.bundle = bundle
-        request = GetToolsRequest(provider=self.provider, metadata=self.metadata, bundle=bundle)
+        request = GetToolsRequest(
+            provider=self.provider, metadata=self.metadata, bundle=bundle
+        )
         tools = self.tools.get_tools(request)
         if self.provider in ("llamaindex", ProviderModel.LLAMAINDEX):
             return self.llama_index.get_tools(tools, request)
@@ -175,6 +188,18 @@ class Toolhouse:
             if response.choices[0].finish_reason != "tool_calls":
                 return []
             response_message = response.choices[0].message
+            # Strip audio and refusal if they're none to support compatibility with other models
+            if (
+                hasattr(response.choices[0].message, "audio")
+                and response.choices[0].message.audio is None
+            ):
+                del response.choices[0].message.audio
+            if (
+                hasattr(response.choices[0].message, "refusal")
+                and response.choices[0].message.refusal is None
+            ):
+                del response.choices[0].message.refusal
+
             if append:
                 msg = response_message.model_dump()
                 del msg["function_call"]
@@ -187,7 +212,9 @@ class Toolhouse:
                         result = self.local_tools.run_tools(tool)
                         messages.append(result.model_dump())
                     else:
-                        run_tool_request = RunToolsRequest(tool, self.provider, self.metadata, self.bundle)
+                        run_tool_request = RunToolsRequest(
+                            tool, self.provider, self.metadata, self.bundle
+                        )
                         run_response = self.tools.run_tools(run_tool_request)
                         messages.append(run_response.content)
 
@@ -202,7 +229,9 @@ class Toolhouse:
                         result = self.local_tools.run_tools(tool)
                         message["content"].append(result.model_dump())
                     else:
-                        run_tool_request = RunToolsRequest(tool, self.provider, self.metadata, self.bundle)
+                        run_tool_request = RunToolsRequest(
+                            tool, self.provider, self.metadata, self.bundle
+                        )
                         run_response = self.tools.run_tools(run_tool_request)
                         output = run_response.content
                         message["content"].append(output)
@@ -217,9 +246,13 @@ class Toolhouse:
         return messages
 
     @classmethod
-    def _enum_matching(cls, value: Union[str, Enum], enum_values: List[str], variable_name: str):
+    def _enum_matching(
+        cls, value: Union[str, Enum], enum_values: List[str], variable_name: str
+    ):
         str_value = value.value if isinstance(value, Enum) else value
         if str_value in enum_values:
             return value
         else:
-            raise ValueError(f"Invalid value for {variable_name}: must match one of {enum_values}")
+            raise ValueError(
+                f"Invalid value for {variable_name}: must match one of {enum_values}"
+            )

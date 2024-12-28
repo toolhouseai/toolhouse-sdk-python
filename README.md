@@ -4,9 +4,11 @@
 
 Welcome to the [Toolhouse Python SDK](https://docs.toolhouse.ai/toolhouse/quick-start-python) documentation. This guide will help you get started with integrating and using the SDK in your project.
 
+[![Read The Docs](https://img.shields.io/badge/Read%20the%20Documentation-0088ff?style=for-the-badge&logo=read-the-docs)](https://docs.toolhouse.ai/) ![GitHub Release Date](https://img.shields.io/github/release-date/toolhouseai/toolhouse-sdk-python?style=for-the-badge) ![GitHub last commit](https://img.shields.io/github/last-commit/toolhouseai/toolhouse-sdk-python?style=for-the-badge) ![PyPI - Downloads](https://img.shields.io/pypi/dm/toolhouse?style=for-the-badge)
+
 Toolhouse allows you to unlock the best LLM knowledge and actions. It works across a wide ranges or LLMs and providers.
 
-With Toolhouse, you can install tools from the [Tool Store](https://app.toolhouse.ai/store) and execute them in the cloud, without the need to handling their execution locally.
+With Toolhouse, you can run and execute them in the cloud, without the need to handling their execution locally.
 
 For more details, you can check out our [documentation](https://docs.toolhouse.ai).
 
@@ -29,7 +31,7 @@ For more details, you can check out our [documentation](https://docs.toolhouse.a
 
 ## About the API
 
-The Toolhouse API provides access to various AI-powered tools and services, that you can install from the [Tool Store](https://app.toolhouse.ai/store).
+The Toolhouse API provides access to various AI-powered tools and services, that you can find on [Toolhouse](https://app.toolhouse.ai).
 
 ## Installation
 
@@ -105,7 +107,7 @@ TOOLHOUSE_API_KEY=
 OPENAI_API_KEY=
 ```
 
-Head over to Toolhouse and install the [Current time tool](https://app.toolhouse.ai/store/current_time).
+Toolhouse has the `current_time` pre-installed on your account.
 
 ```py
 import os
@@ -231,7 +233,7 @@ Bundles help you define groups of tools you want to pass to the LLM based on spe
 For example, if you want to enhance your LLM's knowledge with live stock market data, you can create a Bundle with a stock price API call, a RAG for stock news, and summarization of SEC filings.
 In order to create a bundle, you need to:
 
-1. Go to the [Tool Store - Bundles](https://app.toolhouse.ai/bundles) and create a new bundle. eg: "stock_bundle"
+1. Head over to Toolhouse and create a new [bundle](https://app.toolhouse.ai/bundles). eg: "stock_bundle"
 2. Add tools to the bundle.
 3. Use the bundle in the Toolhouse SDK.
 
@@ -273,7 +275,7 @@ You can submit issues (for example for feature requests or improvements) by usin
 
 ## Publishing tools
 
-Developers can also contribute to Toolhouse by publishing tools for the [Tool Store](https://app.toolhouse.ai/store). The Tool Store allows developers to submit their tools and monetize them every time they're executed. Developers and tools must go through an review and approval process, which includes adhering to the Toolhouse Privacy and Data Protection policy. If you're interested in becoming a publisher, [submit your application](https://tally.so/r/wzeO68).
+Developers can also contribute to Toolhouse by publishing tools. Toolhouse allows developers to submit their tools and monetize them every time they're executed. Developers and tools must go through an review and approval process, which includes adhering to the Toolhouse Privacy and Data Protection policy. If you're interested in becoming a publisher, [submit your application](https://tally.so/r/wzeO68).
 
 ## License
 

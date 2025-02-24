@@ -1,17 +1,33 @@
-from typing import List, Dict
+from typing import Dict, List, Literal, Type, TypedDict, Union, cast
+
+from llama_index.core.tools import FunctionTool
 from pydantic import create_model
 from pydantic.fields import FieldInfo
-from llama_index.core.tools import FunctionTool
-from toolhouse.services.tools import Tools
-from toolhouse.models.GenericTools import GenericTools
-from toolhouse.models.RunToolsRequest import RunToolsRequest
+
 from toolhouse.models.GenericToolCall import GenericToolCall
-from toolhouse.models.Provider import Provider
+from toolhouse.models.GenericTools import GenericTools
 from toolhouse.models.GetToolsRequest import GetToolsRequest
+from toolhouse.models.Provider import Provider
+from toolhouse.models.RunToolsRequest import RunToolsRequest
+from toolhouse.services.tools import Tools
+
+ArrayFieldType = Union[
+    Type[List[str]],
+    Type[List[float]],
+    Type[List[bool]],
+    Type[List[int]],
+]
 
 
-class LlamaIndex():
+class ListItems(TypedDict):
+    """ListItems"""
+
+    type: Literal["string", "number", "boolean"]
+
+
+class LlamaIndex:
     """LlamaIndex"""
+
     def __init__(self, service: Tools):
         self.service = service
 
@@ -33,7 +49,7 @@ class LlamaIndex():
             name=tool["name"],
             description=tool["description"],
             return_direct=True,
-            fn_schema=model
+            fn_schema=model,
         )
 
     def _generate_function(self, tool_name: str, request: GetToolsRequest):
@@ -42,6 +58,7 @@ class LlamaIndex():
             run_tools_request = RunToolsRequest(tool, Provider.LLAMAINDEX, request.metadata, request.bundle)
             run_response = self.service.run_tools(run_tools_request)
             return run_response.content
+
         return wrapper
 
     def _generate_tool_schema(self, args: List[Dict]):
@@ -49,24 +66,35 @@ class LlamaIndex():
         field_definitions = {}
 
         for argument in args:
-            field_type = self._get_field_type(argument["type"])
-            
-            if argument["required"]:
-                field_info = FieldInfo(
-                    description=argument["description"]
-                )
-                field_definitions[argument["name"]] = (field_type, field_info)
-            else:
-                field_info = FieldInfo(
-                    description=argument["description"],
-                    default=None
-                )
-                field_definitions[argument["name"]] = (field_type, field_info)
+            field_type = self._resolve_field_type(argument)
+            field_info = self._create_field_info(argument)
+            field_definitions[argument["name"]] = (field_type, field_info)
 
         return field_definitions
 
-    def _get_field_type(self, type_str: str):
-        """Convert string type to actual type"""
+    def _resolve_field_type(self, argument: Dict):
+        """Resolve the field type based on the argument definition"""
+        if self._is_array_type(argument):
+            return self._get_array_field_type(argument["items"])
+        return self._get_basic_field_type(argument["type"])
+
+    def _is_array_type(self, argument: Dict) -> bool:
+        """Check if the argument is an array type with items definition"""
+        return argument["type"].lower() == "array" and "items" in argument
+
+    def _get_array_field_type(self, items: ListItems) -> ArrayFieldType:
+        """Get the field type for array items"""
+        type_mapping = {
+            "string": List[str],
+            "number": List[float],
+            "boolean": List[bool],
+            "integer": List[int],
+        }
+
+        return cast(ArrayFieldType, type_mapping.get(items["type"].lower(), List[str]))
+
+    def _get_basic_field_type(self, type_str: str):
+        """Convert basic string type to actual type"""
         type_mapping = {
             "string": str,
             "integer": int,
@@ -74,9 +102,14 @@ class LlamaIndex():
             "boolean": bool,
             "array": list,
             "object": dict,
-            # Add more type mappings as needed
         }
-        return type_mapping.get(type_str.lower(), str)  # Default to str if type is not recognized
+        return type_mapping.get(type_str.lower(), str)
+
+    def _create_field_info(self, argument: Dict) -> FieldInfo:
+        """Create a FieldInfo instance based on argument definition"""
+        if argument["required"]:
+            return FieldInfo(description=argument["description"])
+        return FieldInfo(description=argument["description"], default=None)
 
     def _create_model(self, name: str, schema: dict):
         return create_model(name, **schema)

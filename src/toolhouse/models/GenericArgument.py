@@ -20,9 +20,7 @@ class GenericArgument(BaseModel):
     Generic Argument
     """
 
-    def __init__(
-        self, type: Type, required: bool, description: str, name: str, **kwargs
-    ):
+    def __init__(self, type: Type, required: bool, description: str, name: str, **kwargs):
         """
         Initialize GenericArgument
         Parameters:

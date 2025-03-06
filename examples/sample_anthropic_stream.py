@@ -1,10 +1,12 @@
 """Antropic Sample"""
+
 import os
 from typing import List
 
-from dotenv import load_dotenv
 from anthropic import Anthropic, MessageStopEvent, TextEvent
-from toolhouse import Toolhouse, Provider # Import the Toolhouse SDK
+from dotenv import load_dotenv
+
+from toolhouse import Provider, Toolhouse  # Import the Toolhouse SDK
 
 #  Make sure to set up the .env file according to the .env.example file.
 load_dotenv()
@@ -19,19 +21,19 @@ client = Anthropic(api_key=ANTHROPIC_API_KEY)
 th = Toolhouse(api_key=TH_API_KEY, provider=Provider.ANTHROPIC)
 
 # Define the initial messages to be sent to the model
-messages: List = [{
-    "role": "user",
-    "content":
-        "Generate code to calculate the Fibonacci sequence to 100."
-        "Execute it and give me the result"
-    }]
+messages: List = [
+    {
+        "role": "user",
+        "content": "Generate code to calculate the Fibonacci sequence to 100." "Execute it and give me the result",
+    }
+]
 
 with client.messages.stream(
     model="claude-3-5-sonnet-20240620",
     max_tokens=1024,
     # Retrieve tools installed from Toolhouse
     tools=th.get_tools(),
-    messages=messages
+    messages=messages,
 ) as stream:
     for block in stream:
         if isinstance(block, MessageStopEvent):
@@ -42,11 +44,11 @@ with client.messages.stream(
 
 
 with client.messages.stream(
-            model="claude-3-5-sonnet-20240620",
-            max_tokens=1024,
-            # Retrieve tools installed from Toolhouse
-            tools=th.get_tools(),
-            messages=messages
+    model="claude-3-5-sonnet-20240620",
+    max_tokens=1024,
+    # Retrieve tools installed from Toolhouse
+    tools=th.get_tools(),
+    messages=messages,
 ) as stream:
     for text in stream.text_stream:
         print(text, end="", flush=True)
